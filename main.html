@@ -6,1354 +6,932 @@
 <title>BeeHive Network — Swarm Intelligence Protocol</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --honey: #F5A623;
-    --honey-light: #FFD27F;
-    --honey-pale: #FFF3D6;
-    --comb: #E8891A;
-    --deep: #1A0F00;
-    --dark: #0D0800;
-    --mid: #3A2200;
-    --amber-glow: #FF9500;
-    --wax: #FFC857;
-    --cream: #FFF8EC;
-    --muted: #8A6A3A;
-    --success: #4CAF7D;
-    --danger: #E05454;
-    --info: #5BADF0;
-    --border: rgba(245,166,35,0.18);
-    --border-strong: rgba(245,166,35,0.35);
-  }
+:root{--honey:#F5A623;--honey-light:#FFD27F;--comb:#E8891A;--dark:#0D0800;--amber:#FF9500;--wax:#FFC857;--cream:#FFF8EC;--success:#4CAF7D;--danger:#E05454;--info:#5BADF0;--purple:#C792EA;--border:rgba(245,166,35,0.18);--border-s:rgba(245,166,35,0.35);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:var(--cream);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none;}
+.cursor{position:fixed;width:12px;height:12px;background:var(--honey);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:screen;}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(245,166,35,0.45);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .12s ease;}
+.hex-bg{position:fixed;inset:0;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V17L28 1l28 16v33L28 66zM28 100L0 84V51l28 16 28-16v33L28 100z' fill='none' stroke='%23F5A623' stroke-width='1'/%3E%3C/svg%3E");background-size:56px 100px;pointer-events:none;z-index:0;}
+.glow{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.g1{width:600px;height:600px;background:rgba(245,166,35,.08);top:-200px;right:-200px;}
+.g2{width:400px;height:400px;background:rgba(255,149,0,.06);bottom:20%;left:-150px;}
+.g3{width:300px;height:300px;background:rgba(255,200,87,.05);bottom:-100px;right:20%;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 4rem;background:rgba(13,8,0,.75);backdrop-filter:blur(24px);border-bottom:.5px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;letter-spacing:.04em;color:var(--honey);text-decoration:none;}
+.hex-icon{width:32px;height:32px;background:var(--honey);clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);animation:hexPulse 3s ease-in-out infinite;flex-shrink:0;}
+@keyframes hexPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:rgba(255,248,236,.55);text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:var(--honey);}
+.nav-badge{background:linear-gradient(135deg,var(--honey),var(--comb));color:var(--dark);font-size:.75rem;font-weight:700;padding:.45rem 1.2rem;border-radius:50px;letter-spacing:.04em;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.live-dot{width:6px;height:6px;background:var(--dark);border-radius:50%;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.nav-badge:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,.3);}
+section{position:relative;z-index:1;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;overflow:hidden;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,.1);border:.5px solid var(--border-s);border-radius:50px;padding:.4rem 1.2rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--honey-light);margin-bottom:2rem;animation:fadeUp .8s ease both;}
+.edot{width:6px;height:6px;background:var(--success);border-radius:50%;animation:blink 2s infinite;}
+.hero-title{font-size:clamp(3.5rem,8vw,7rem);font-weight:800;line-height:.95;letter-spacing:-.03em;margin-bottom:1.5rem;animation:fadeUp .8s .1s ease both;}
+.gold{color:var(--honey);}.italic{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;}
+.hero-sub{font-size:1.05rem;color:rgba(255,248,236,.5);max-width:520px;line-height:1.75;margin-bottom:3rem;font-weight:400;animation:fadeUp .8s .2s ease both;}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s .3s ease both;}
+.btn-p{background:linear-gradient(135deg,var(--honey),var(--comb));color:var(--dark);padding:.85rem 2.2rem;border-radius:50px;font-weight:700;font-size:.88rem;border:none;cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block;font-family:'Syne',sans-serif;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(245,166,35,.35);}
+.btn-s{background:transparent;color:var(--cream);padding:.85rem 2.2rem;border-radius:50px;font-weight:600;font-size:.88rem;border:.5px solid var(--border-s);cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block;font-family:'Syne',sans-serif;}
+.btn-s:hover{border-color:var(--honey);color:var(--honey);background:rgba(245,166,35,.06);}
+.floating-nodes{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.f-node{position:absolute;border-radius:50%;animation:float linear infinite;opacity:0;}
+@keyframes float{0%{transform:translateY(100vh) scale(0);opacity:0;}10%{opacity:.8;}90%{opacity:.4;}100%{transform:translateY(-100px) scale(1);opacity:0;}}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,248,236,.28);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;animation:fadeUp 1s 1s ease both;}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,rgba(245,166,35,.6),transparent);animation:scrollP 2s ease infinite;}
+@keyframes scrollP{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.6);}}
+.ticker{border-top:.5px solid var(--border);border-bottom:.5px solid var(--border);overflow:hidden;white-space:nowrap;background:rgba(245,166,35,.015);padding:.65rem 0;}
+.ticker-inner{display:inline-flex;gap:3rem;animation:tick 24s linear infinite;font-family:'DM Mono',monospace;font-size:.7rem;color:rgba(255,248,236,.28);letter-spacing:.08em;}
+@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.t-item{display:inline-flex;align-items:center;gap:10px;}
+.t-dot{width:4px;height:4px;background:var(--honey);border-radius:50%;opacity:.5;}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:.5px solid var(--border);border-bottom:.5px solid var(--border);}
+.stat-item{background:var(--dark);padding:2.5rem 2rem;text-align:center;transition:background .2s;}
+.stat-item:hover{background:rgba(245,166,35,.04);}
+.stat-num{font-size:2.5rem;font-weight:800;color:var(--honey);letter-spacing:-.03em;}
+.stat-label{font-size:.72rem;color:rgba(255,248,236,.38);letter-spacing:.08em;text-transform:uppercase;margin-top:.4rem;font-weight:500;}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── NETWORK SECTION ── */
+.net-section{padding:6rem 0;background:rgba(245,166,35,.015);border-top:.5px solid var(--border);border-bottom:.5px solid var(--border);}
+.net-inner{max-width:1400px;margin:0 auto;padding:0 4rem;}
+.net-header{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-bottom:2.5rem;}
+.section-label{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--honey);margin-bottom:1rem;display:flex;align-items:center;gap:12px;}
+.section-label::before{content:'';display:block;width:24px;height:1px;background:var(--honey);opacity:.6;}
+.section-title{font-size:clamp(2rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:1rem;}
+.section-title em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--honey-light);}
+.section-desc{color:rgba(255,248,236,.48);font-size:.9rem;line-height:1.75;font-weight:400;}
+.net-controls{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-top:1.5rem;}
+.ctrl-btn{display:inline-flex;align-items:center;gap:7px;padding:.6rem 1.3rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .22s;border:none;letter-spacing:.02em;}
+.ctrl-btn.primary{background:linear-gradient(135deg,var(--honey),var(--comb));color:var(--dark);}
+.ctrl-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,166,35,.35);}
+.ctrl-btn.secondary{background:rgba(245,166,35,.08);color:var(--honey-light);border:.5px solid var(--border-s);}
+.ctrl-btn.secondary:hover{background:rgba(245,166,35,.14);}
+.ctrl-btn.danger{background:rgba(224,84,84,.1);color:#f08080;border:.5px solid rgba(224,84,84,.3);}
+.ctrl-btn.danger:hover{background:rgba(224,84,84,.18);}
+.ctrl-btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+.speed-wrap{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:.72rem;color:rgba(255,248,236,.38);}
+.speed-wrap select{background:rgba(0,0,0,.4);border:.5px solid var(--border-s);color:var(--cream);font-family:'DM Mono',monospace;font-size:.72rem;padding:.28rem .55rem;border-radius:6px;outline:none;cursor:pointer;}
+.net-canvas-wrap{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start;}
+.canvas-container{position:relative;background:rgba(0,0,0,.5);border:.5px solid var(--border);border-radius:20px;overflow:hidden;}
+#networkCanvas{display:block;width:100%;height:560px;}
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+.panel{background:rgba(0,0,0,.5);border:.5px solid var(--border);border-radius:16px;padding:1.3rem;}
+.panel-title{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,248,236,.32);margin-bottom:.9rem;padding-bottom:.6rem;border-bottom:.5px solid var(--border);}
+.legend-item{display:flex;align-items:center;gap:10px;font-size:.76rem;color:rgba(255,248,236,.5);margin-bottom:.55rem;}
+.lg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.lg-line{width:24px;height:2px;flex-shrink:0;}
+.lg-dash{width:24px;height:0;border-top:2px dashed rgba(255,248,236,.25);flex-shrink:0;}
+.path-nodes{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-height:34px;}
+.path-node{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:600;border:1.5px solid var(--honey);color:var(--honey);background:rgba(245,166,35,.1);}
+.path-node.queen{border-color:var(--purple);color:var(--purple);background:rgba(199,146,234,.1);}
+.path-arrow{color:rgba(255,248,236,.25);font-size:.75rem;}
+.path-empty{font-size:.72rem;color:rgba(255,248,236,.2);font-family:'DM Mono',monospace;}
+.right-col{display:flex;flex-direction:column;gap:1rem;}
+.info-row{display:flex;align-items:center;justify-content:space-between;font-size:.76rem;margin-bottom:.5rem;}
+.info-key{color:rgba(255,248,236,.36);}
+.info-val{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--honey-light);}
+.info-val.green{color:var(--success);}.info-val.red{color:var(--danger);}
+.log-wrap{background:rgba(0,0,0,.6);border:.5px solid var(--border);border-radius:16px;overflow:hidden;}
+.log-header{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.1rem;border-bottom:.5px solid var(--border);background:rgba(0,0,0,.3);}
+.log-title{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,248,236,.3);}
+.log-clear{font-size:.62rem;color:rgba(255,248,236,.22);cursor:pointer;background:none;border:none;font-family:'Syne',sans-serif;letter-spacing:.04em;transition:color .2s;}
+.log-clear:hover{color:var(--honey);}
+.log-body{height:150px;overflow-y:auto;padding:.75rem 1.1rem;display:flex;flex-direction:column;gap:1px;}
+.log-body::-webkit-scrollbar{width:3px;}
+.log-body::-webkit-scrollbar-thumb{background:rgba(245,166,35,.2);border-radius:3px;}
+.log-entry{display:flex;align-items:flex-start;gap:7px;font-family:'DM Mono',monospace;font-size:.66rem;line-height:1.65;color:rgba(255,248,236,.38);animation:logIn .3s ease;}
+@keyframes logIn{from{opacity:0;transform:translateX(-6px);}to{opacity:1;transform:none;}}
+.log-time{color:rgba(255,248,236,.18);flex-shrink:0;}
+.ls{color:var(--success);}.le{color:var(--danger);}.li{color:var(--honey-light);}.lq{color:var(--purple);}
 
-  html { scroll-behavior: smooth; }
+/* ── ARCH ── */
+.arch-section{padding:8rem 4rem;max-width:1200px;margin:0 auto;}
+.nodes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:.5px solid var(--border);border-radius:16px;overflow:hidden;margin-top:4rem;}
+.node-card{background:rgba(13,8,0,.92);padding:2rem;position:relative;overflow:hidden;transition:background .3s;}
+.node-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--honey),transparent);opacity:0;transition:opacity .3s;}
+.node-card:hover{background:rgba(245,166,35,.04);}
+.node-card:hover::before{opacity:1;}
+.node-id{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--honey);letter-spacing:.1em;opacity:.7;margin-bottom:.65rem;}
+.node-name{font-size:1.05rem;font-weight:700;margin-bottom:.45rem;}
+.node-desc{font-size:.79rem;color:rgba(255,248,236,.42);line-height:1.65;font-weight:400;}
+.node-status{display:inline-flex;align-items:center;gap:6px;margin-top:1.1rem;font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.sd{width:5px;height:5px;border-radius:50%;}
+.sa .sd{background:var(--success);box-shadow:0 0 6px var(--success);}.sa{color:var(--success);}
+.sq .sd{background:var(--honey);box-shadow:0 0 8px var(--honey);animation:blink 1.5s infinite;}.sq{color:var(--honey);}
+.load-bar{height:3px;background:rgba(255,248,236,.07);border-radius:2px;overflow:hidden;margin-top:.75rem;}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--honey),var(--amber));border-radius:2px;}
+.nbg{position:absolute;bottom:-14px;right:-6px;font-size:4.5rem;opacity:.04;pointer-events:none;font-weight:800;line-height:1;}
 
-  body {
-    background: var(--dark);
-    color: var(--cream);
-    font-family: 'Syne', sans-serif;
-    overflow-x: hidden;
-    cursor: none;
-  }
+/* ── FEATURES ── */
+.features-section{padding:8rem 4rem;max-width:1200px;margin:0 auto;}
+.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:4rem;}
+.feature-card{background:rgba(255,248,236,.018);border:.5px solid var(--border);border-radius:16px;padding:2.2rem;transition:all .3s;}
+.feature-card:hover{border-color:rgba(245,166,35,.28);background:rgba(245,166,35,.03);}
+.feature-card.wide{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center;background:linear-gradient(135deg,rgba(245,166,35,.07),rgba(232,137,26,.03));}
+.f-icon{width:42px;height:42px;background:rgba(245,166,35,.1);border:.5px solid rgba(245,166,35,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1.4rem;font-size:1.1rem;}
+.f-title{font-size:1rem;font-weight:700;margin-bottom:.6rem;}
+.f-desc{font-size:.82rem;color:rgba(255,248,236,.42);line-height:1.7;font-weight:400;}
+.f-tag{display:inline-block;background:rgba(245,166,35,.1);border:.5px solid rgba(245,166,35,.2);color:var(--honey-light);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .7rem;border-radius:50px;margin-top:.9rem;}
 
-  /* Custom Cursor */
-  .cursor {
-    position: fixed;
-    width: 12px; height: 12px;
-    background: var(--honey);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: width 0.2s, height 0.2s, background 0.2s;
-    mix-blend-mode: screen;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 36px; height: 36px;
-    border: 1.5px solid rgba(245,166,35,0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%,-50%);
-    transition: all 0.15s ease;
-  }
-  body:hover .cursor { opacity: 1; }
+/* ── API ── */
+.api-section{padding:8rem 4rem;background:rgba(245,166,35,.01);border-top:.5px solid var(--border);}
+.api-inner{max-width:1200px;margin:0 auto;}
+.api-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:4rem;align-items:start;margin-top:4rem;}
+.api-endpoints{display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:12px;overflow:hidden;}
+.endpoint{background:rgba(13,8,0,.95);padding:1rem 1.4rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:background .2s;border-left:2px solid transparent;}
+.endpoint:hover{background:rgba(245,166,35,.05);}
+.endpoint.active{background:rgba(245,166,35,.07);border-left-color:var(--honey);}
+.method{font-family:'DM Mono',monospace;font-size:.65rem;padding:.18rem .5rem;border-radius:4px;min-width:40px;text-align:center;letter-spacing:.04em;}
+.mg{background:rgba(91,173,240,.15);color:var(--info);}.mp{background:rgba(76,175,125,.15);color:var(--success);}
+.ep-path{font-family:'DM Mono',monospace;font-size:.78rem;color:rgba(255,248,236,.68);}
+.ep-desc{font-size:.72rem;color:rgba(255,248,236,.3);margin-left:auto;}
+.code-block{background:rgba(0,0,0,.55);border:.5px solid var(--border);border-radius:12px;overflow:hidden;}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem 1.2rem;border-bottom:.5px solid var(--border);background:rgba(0,0,0,.3);}
+.code-dots{display:flex;gap:6px;}
+.code-dots span{width:10px;height:10px;border-radius:50%;}
+.code-dots span:nth-child(1){background:#ff5f56;}.code-dots span:nth-child(2){background:#ffbd2e;}.code-dots span:nth-child(3){background:#27c93f;}
+.code-lang{font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(255,248,236,.28);}
+.code-body{padding:1.4rem;font-family:'DM Mono',monospace;font-size:.76rem;line-height:1.85;overflow-x:auto;}
+.ck{color:var(--info);}.cs{color:var(--honey-light);}.cn{color:var(--success);}.cc{color:rgba(255,248,236,.22);font-style:italic;}.cm{color:var(--purple);}
 
-  /* Honeycomb BG pattern */
-  .hex-bg {
-    position: fixed;
-    inset: 0;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V17L28 1l28 16v33L28 66zM28 100L0 84V51l28 16 28-16v33L28 100z' fill='none' stroke='%23F5A623' stroke-width='1'/%3E%3C/svg%3E");
-    background-size: 56px 100px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Ambient glow blobs */
-  .glow-blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .glow-blob-1 { width: 600px; height: 600px; background: rgba(245,166,35,0.08); top: -200px; right: -200px; }
-  .glow-blob-2 { width: 400px; height: 400px; background: rgba(255,149,0,0.06); bottom: 20%; left: -150px; }
-  .glow-blob-3 { width: 300px; height: 300px; background: rgba(255,200,87,0.05); bottom: -100px; right: 20%; }
-
-  /* Navigation */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.2rem 4rem;
-    background: rgba(13,8,0,0.7);
-    backdrop-filter: blur(20px);
-    border-bottom: 0.5px solid var(--border);
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 1.1rem; font-weight: 700; letter-spacing: 0.04em;
-    color: var(--honey);
-    text-decoration: none;
-  }
-  .nav-logo .hex-icon {
-    width: 32px; height: 32px;
-    background: var(--honey);
-    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-    display: flex; align-items: center; justify-content: center;
-    animation: hexPulse 3s ease-in-out infinite;
-  }
-  @keyframes hexPulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(245,166,35,0.4); transform: scale(1); }
-    50% { box-shadow: 0 0 20px 6px rgba(245,166,35,0.15); transform: scale(1.05); }
-  }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a {
-    color: rgba(255,248,236,0.6);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--honey); }
-  .nav-badge {
-    background: linear-gradient(135deg, var(--honey), var(--comb));
-    color: var(--dark);
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.45rem 1.2rem;
-    border-radius: 50px;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .nav-badge:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,166,35,0.3); }
-
-  /* Sections */
-  section { position: relative; z-index: 1; }
-
-  /* Hero */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 8rem 2rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(245,166,35,0.1);
-    border: 0.5px solid var(--border-strong);
-    border-radius: 50px;
-    padding: 0.4rem 1.2rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--honey-light);
-    margin-bottom: 2rem;
-    animation: fadeUp 0.8s ease both;
-  }
-  .hero-eyebrow .dot {
-    width: 6px; height: 6px;
-    background: var(--success);
-    border-radius: 50%;
-    animation: blink 2s ease infinite;
-  }
-  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3.5rem, 8vw, 7rem);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 1.5rem;
-    animation: fadeUp 0.8s 0.1s ease both;
-  }
-  .hero-title .line-honey { color: var(--honey); }
-  .hero-title .line-italic { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
-
-  .hero-sub {
-    font-size: 1.05rem;
-    color: rgba(255,248,236,0.55);
-    max-width: 520px;
-    line-height: 1.7;
-    margin-bottom: 3rem;
-    font-weight: 400;
-    animation: fadeUp 0.8s 0.2s ease both;
-  }
-
-  .hero-cta {
-    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
-    animation: fadeUp 0.8s 0.3s ease both;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--honey) 0%, var(--comb) 100%);
-    color: var(--dark);
-    padding: 0.85rem 2.2rem;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.25s;
-    letter-spacing: 0.02em;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245,166,35,0.35); }
-  .btn-secondary {
-    background: transparent;
-    color: var(--cream);
-    padding: 0.85rem 2.2rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border: 0.5px solid var(--border-strong);
-    cursor: pointer;
-    transition: all 0.25s;
-    letter-spacing: 0.02em;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .btn-secondary:hover { border-color: var(--honey); color: var(--honey); background: rgba(245,166,35,0.06); }
-
-  /* Floating nodes animation */
-  .floating-nodes {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .f-node {
-    position: absolute;
-    border-radius: 50%;
-    animation: float linear infinite;
-    opacity: 0;
-  }
-  @keyframes float {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 0.6; }
-    100% { transform: translateY(-100px) scale(1); opacity: 0; }
-  }
-
-  /* Scroll indicator */
-  .scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: rgba(255,248,236,0.3);
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    animation: fadeUp 1s 1s ease both;
-  }
-  .scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, rgba(245,166,35,0.6), transparent);
-    animation: scrollPulse 2s ease infinite;
-  }
-  @keyframes scrollPulse { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(0.6); } }
-
-  /* Stats bar */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border-top: 0.5px solid var(--border);
-    border-bottom: 0.5px solid var(--border);
-  }
-  .stat-item {
-    background: var(--dark);
-    padding: 2.5rem 2rem;
-    text-align: center;
-    transition: background 0.2s;
-  }
-  .stat-item:hover { background: rgba(245,166,35,0.04); }
-  .stat-num {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--honey);
-    letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-  }
-  .stat-label {
-    font-size: 0.75rem;
-    color: rgba(255,248,236,0.4);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 0.4rem;
-    font-weight: 500;
-  }
-
-  /* Architecture section */
-  .arch-section {
-    padding: 8rem 4rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .section-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--honey);
-    margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-label::before {
-    content: '';
-    display: block;
-    width: 24px; height: 1px;
-    background: var(--honey);
-    opacity: 0.6;
-  }
-  .section-title {
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-    margin-bottom: 1.5rem;
-  }
-  .section-title em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--honey-light); }
-  .section-desc {
-    color: rgba(255,248,236,0.5);
-    font-size: 1rem;
-    line-height: 1.75;
-    max-width: 480px;
-    font-weight: 400;
-  }
-
-  /* Node grid */
-  .nodes-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 4rem;
-  }
-  .node-card {
-    background: rgba(13,8,0,0.9);
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-    cursor: default;
-  }
-  .node-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--honey), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .node-card:hover { background: rgba(245,166,35,0.04); }
-  .node-card:hover::before { opacity: 1; }
-  .node-id {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--honey);
-    letter-spacing: 0.1em;
-    opacity: 0.7;
-    margin-bottom: 0.75rem;
-  }
-  .node-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
-  .node-desc {
-    font-size: 0.82rem;
-    color: rgba(255,248,236,0.45);
-    line-height: 1.65;
-    font-weight: 400;
-  }
-  .node-status {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-top: 1.2rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .status-dot { width: 5px; height: 5px; border-radius: 50%; }
-  .status-active .status-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
-  .status-active { color: var(--success); }
-  .status-queen .status-dot { background: var(--honey); box-shadow: 0 0 8px var(--honey); animation: blink 1.5s infinite; }
-  .status-queen { color: var(--honey); }
-  .node-hex-bg {
-    position: absolute;
-    bottom: -20px; right: -20px;
-    font-size: 5rem;
-    opacity: 0.04;
-    pointer-events: none;
-    font-weight: 800;
-  }
-
-  /* Network Topology Live */
-  .topology-section {
-    padding: 8rem 4rem;
-    background: rgba(245,166,35,0.02);
-    border-top: 0.5px solid var(--border);
-    border-bottom: 0.5px solid var(--border);
-  }
-  .topo-inner { max-width: 1200px; margin: 0 auto; }
-  .topo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
-  .topo-canvas { position: relative; }
-  #network-svg { width: 100%; }
-
-  /* Features */
-  .features-section { padding: 8rem 4rem; max-width: 1200px; margin: 0 auto; }
-  .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 4rem; }
-  .feature-card {
-    background: rgba(255,248,236,0.02);
-    border: 0.5px solid var(--border);
-    border-radius: 16px;
-    padding: 2.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, background 0.3s;
-  }
-  .feature-card:hover { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.03); }
-  .feature-card.featured {
-    background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(232,137,26,0.04) 100%);
-    border-color: rgba(245,166,35,0.2);
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: center;
-  }
-  .feature-icon {
-    width: 44px; height: 44px;
-    background: rgba(245,166,35,0.1);
-    border: 0.5px solid rgba(245,166,35,0.2);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-  }
-  .feature-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.7rem; }
-  .feature-desc { font-size: 0.85rem; color: rgba(255,248,236,0.45); line-height: 1.7; font-weight: 400; }
-  .feature-tag {
-    display: inline-block;
-    background: rgba(245,166,35,0.1);
-    border: 0.5px solid rgba(245,166,35,0.2);
-    color: var(--honey-light);
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.25rem 0.75rem;
-    border-radius: 50px;
-    margin-top: 1rem;
-  }
-
-  /* API section */
-  .api-section {
-    padding: 8rem 4rem;
-    background: rgba(245,166,35,0.015);
-    border-top: 0.5px solid var(--border);
-  }
-  .api-inner { max-width: 1200px; margin: 0 auto; }
-  .api-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; margin-top: 4rem; }
-  .api-endpoints { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; }
-  .endpoint {
-    background: rgba(13,8,0,0.95);
-    padding: 1.1rem 1.5rem;
-    display: flex; align-items: center; gap: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .endpoint:hover { background: rgba(245,166,35,0.06); }
-  .endpoint.active { background: rgba(245,166,35,0.08); border-left: 2px solid var(--honey); }
-  .method {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    font-weight: 400;
-    padding: 0.2rem 0.55rem;
-    border-radius: 4px;
-    min-width: 44px;
-    text-align: center;
-    letter-spacing: 0.04em;
-  }
-  .method.get { background: rgba(91,173,240,0.15); color: var(--info); }
-  .method.post { background: rgba(76,175,125,0.15); color: var(--success); }
-  .endpoint-path {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    color: rgba(255,248,236,0.7);
-  }
-  .endpoint-desc { font-size: 0.75rem; color: rgba(255,248,236,0.35); margin-left: auto; }
-
-  .code-block {
-    background: rgba(0,0,0,0.5);
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .code-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.85rem 1.25rem;
-    border-bottom: 0.5px solid var(--border);
-    background: rgba(0,0,0,0.3);
-  }
-  .code-dots { display: flex; gap: 6px; }
-  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
-  .code-dots span:nth-child(1) { background: #ff5f56; }
-  .code-dots span:nth-child(2) { background: #ffbd2e; }
-  .code-dots span:nth-child(3) { background: #27c93f; }
-  .code-lang {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    color: rgba(255,248,236,0.3);
-    letter-spacing: 0.08em;
-  }
-  .code-body {
-    padding: 1.5rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.8rem;
-    line-height: 1.8;
-    overflow-x: auto;
-  }
-  .c-key { color: var(--info); }
-  .c-str { color: var(--honey-light); }
-  .c-num { color: var(--success); }
-  .c-comment { color: rgba(255,248,236,0.25); font-style: italic; }
-  .c-method { color: #C792EA; }
-
-  /* FAQ */
-  .faq-section { padding: 8rem 4rem; max-width: 900px; margin: 0 auto; }
-  .faq-grid { margin-top: 4rem; display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
-  .faq-item {
-    background: rgba(13,8,0,0.9);
-    padding: 1.75rem 2rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .faq-item:hover { background: rgba(245,166,35,0.04); }
-  .faq-q {
-    display: flex; align-items: center; justify-content: space-between;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .faq-plus {
-    width: 22px; height: 22px;
-    border: 0.5px solid var(--border-strong);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem;
-    color: var(--honey);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-  .faq-item.open .faq-plus { transform: rotate(45deg); }
-  .faq-a {
-    display: none;
-    padding-top: 1rem;
-    font-size: 0.87rem;
-    color: rgba(255,248,236,0.5);
-    line-height: 1.75;
-    font-weight: 400;
-  }
-  .faq-item.open .faq-a { display: block; }
-
-  /* Footer */
-  footer {
-    border-top: 0.5px solid var(--border);
-    padding: 3rem 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 1;
-  }
-  .footer-logo { color: var(--honey); font-weight: 800; font-size: 1rem; letter-spacing: 0.04em; }
-  .footer-note { font-size: 0.75rem; color: rgba(255,248,236,0.25); letter-spacing: 0.04em; }
-
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .reveal {
-    opacity: 0;
-    transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .reveal.visible { opacity: 1; transform: none; }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-
-  /* Network SVG nodes */
-  .net-node { cursor: pointer; transition: all 0.3s; }
-  .net-node:hover circle { stroke-width: 2; }
-  .pulse-ring { animation: pulseRing 2s ease-out infinite; transform-origin: center; }
-  @keyframes pulseRing {
-    0% { opacity: 0.8; transform: scale(1); }
-    100% { opacity: 0; transform: scale(2.2); }
-  }
-
-  /* Data flow animation */
-  .packet { animation: travel 2.5s linear infinite; }
-  @keyframes travel {
-    0% { offset-distance: 0%; opacity: 0; }
-    5% { opacity: 1; }
-    95% { opacity: 1; }
-    100% { offset-distance: 100%; opacity: 0; }
-  }
-
-  /* Ticker */
-  .ticker {
-    border-top: 0.5px solid var(--border);
-    border-bottom: 0.5px solid var(--border);
-    overflow: hidden;
-    white-space: nowrap;
-    background: rgba(245,166,35,0.02);
-    padding: 0.7rem 0;
-  }
-  .ticker-inner {
-    display: inline-flex;
-    gap: 3rem;
-    animation: ticker 20s linear infinite;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: rgba(255,248,236,0.3);
-    letter-spacing: 0.08em;
-  }
-  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-  .ticker-item { display: inline-flex; align-items: center; gap: 10px; }
-  .ticker-dot { width: 4px; height: 4px; background: var(--honey); border-radius: 50%; opacity: 0.5; }
-
-  /* Load bar */
-  .load-bar {
-    height: 3px;
-    background: rgba(255,248,236,0.08);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 0.75rem;
-  }
-  .load-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--honey), var(--amber-glow));
-    border-radius: 2px;
-    transition: width 1s ease;
-  }
-
-  @media (max-width: 768px) {
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { display: none; }
-    .hero { padding: 7rem 1.5rem 3rem; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .arch-section, .topology-section, .features-section, .api-section { padding: 5rem 1.5rem; }
-    .topo-layout, .api-grid { grid-template-columns: 1fr; }
-    .nodes-grid { grid-template-columns: 1fr; }
-    .features-grid { grid-template-columns: 1fr; }
-    .feature-card.featured { grid-column: 1; display: block; }
-    .faq-section { padding: 5rem 1.5rem; }
-    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
-  }
+/* ── FAQ ── */
+.faq-section{padding:8rem 4rem;max-width:900px;margin:0 auto;}
+.faq-grid{margin-top:4rem;display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:16px;overflow:hidden;}
+.faq-item{background:rgba(13,8,0,.9);padding:1.6rem 2rem;cursor:pointer;transition:background .2s;}
+.faq-item:hover{background:rgba(245,166,35,.04);}
+.faq-q{display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:.92rem;}
+.faq-plus{width:22px;height:22px;border:.5px solid var(--border-s);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--honey);flex-shrink:0;transition:transform .2s;}
+.faq-item.open .faq-plus{transform:rotate(45deg);}
+.faq-a{display:none;padding-top:.9rem;font-size:.84rem;color:rgba(255,248,236,.48);line-height:1.75;font-weight:400;}
+.faq-item.open .faq-a{display:block;}
+footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.f-logo{color:var(--honey);font-weight:800;font-size:1rem;letter-spacing:.04em;}
+.f-note{font-size:.72rem;color:rgba(255,248,236,.22);letter-spacing:.04em;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:none;}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+@media(max-width:900px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}.net-inner,.arch-section,.features-section,.api-section,.faq-section{padding:5rem 1.5rem;}.net-header,.net-canvas-wrap,.bottom-row{grid-template-columns:1fr;}.nodes-grid,.features-grid,.api-grid{grid-template-columns:1fr;}.feature-card.wide{grid-column:1;display:block;}.stats-bar{grid-template-columns:repeat(2,1fr);}footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem;}}
 </style>
 </head>
 <body>
 
 <div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursor-ring"></div>
-
+<div class="cursor-ring" id="cring"></div>
 <div class="hex-bg"></div>
-<div class="glow-blob glow-blob-1"></div>
-<div class="glow-blob glow-blob-2"></div>
-<div class="glow-blob glow-blob-3"></div>
+<div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
 
-<!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
-    <div class="hex-icon"></div>
-    BeeNet
-  </a>
+  <a href="#" class="nav-logo"><div class="hex-icon"></div>BeeNet</a>
   <ul class="nav-links">
+    <li><a href="#network">Network</a></li>
     <li><a href="#architecture">Architecture</a></li>
-    <li><a href="#topology">Topology</a></li>
     <li><a href="#api">API</a></li>
     <li><a href="#faq">FAQ</a></li>
   </ul>
-  <div class="nav-badge">🐝 Queen Active</div>
+  <div class="nav-badge"><span class="live-dot"></span>Queen Active</div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="floating-nodes" id="floating-nodes"></div>
-
-  <div class="hero-eyebrow">
-    <span class="dot"></span>
-    Swarm Intelligence Protocol — Live
-  </div>
-
-  <h1 class="hero-title">
-    <span class="line-honey">Beehive</span><br>
-    <span class="line-italic">Consensus</span><br>
-    Network
-  </h1>
-
-  <p class="hero-sub">
-    A self-organizing, fault-tolerant mesh network inspired by bee colonies — 
-    where every node thinks, learns, and routes like a bee finding flowers.
-  </p>
-
+  <div class="floating-nodes" id="fnodes"></div>
+  <div class="hero-eyebrow"><span class="edot"></span>Swarm Intelligence Protocol — Live Simulation</div>
+  <h1 class="hero-title"><span class="gold">Beehive</span><br><span class="italic">Consensus</span><br>Network</h1>
+  <p class="hero-sub">A self-organizing, fault-tolerant mesh where every node learns, routes, and elects leaders — just like honeybees find flowers.</p>
   <div class="hero-cta">
-    <a href="#topology" class="btn-primary">Explore the Hive</a>
-    <a href="#api" class="btn-secondary">API Reference →</a>
+    <a href="#network" class="btn-p">Watch the Hive Live</a>
+    <a href="#api" class="btn-s">API Reference →</a>
   </div>
+  <div class="scroll-hint"><div class="scroll-line"></div>Scroll</div>
+</section>
 
-  <div class="scroll-hint">
-    <div class="scroll-line"></div>
-    Scroll
+<div class="ticker"><div class="ticker-inner" id="ticker"></div></div>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num" id="sPkts">0</div><div class="stat-label">Packets Routed</div></div>
+  <div class="stat-item"><div class="stat-num" id="sNodes">6</div><div class="stat-label">Active Nodes</div></div>
+  <div class="stat-item"><div class="stat-num">99.9%</div><div class="stat-label">Network Uptime</div></div>
+  <div class="stat-item"><div class="stat-num">~2ms</div><div class="stat-label">Avg Latency</div></div>
+</div>
+
+<section class="net-section" id="network">
+  <div class="net-inner">
+    <div class="net-header reveal">
+      <div>
+        <div class="section-label">Live Network Simulation</div>
+        <h2 class="section-title">The hive <em>in motion</em></h2>
+        <p class="section-desc">Watch data packets travel the mesh in real time. The Queen bee sprite visits each node. Dotted lines trace every active route. Fail nodes, trigger re-elections — fully interactive.</p>
+        <div class="net-controls">
+          <button class="ctrl-btn primary" id="btn-send" onclick="userSendPacket()">🐝 Send Packet</button>
+          <button class="ctrl-btn secondary" id="btn-queen" onclick="queenVisit()">👑 Queen Tour</button>
+          <button class="ctrl-btn danger" id="btn-fail" onclick="failRandomNode()">💥 Fail Node</button>
+          <button class="ctrl-btn secondary" onclick="resetAll()">↺ Reset</button>
+          <div class="speed-wrap">Speed: <select id="speedSel" onchange="SPEED=parseFloat(this.value)"><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5" selected>1.5×</option><option value="2">2×</option></select></div>
+        </div>
+      </div>
+      <div class="reveal d1" style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="panel">
+          <div class="panel-title">Network State</div>
+          <div class="info-row"><span class="info-key">Queen Node</span><span class="info-val" id="iQ">Node 03</span></div>
+          <div class="info-row"><span class="info-key">Queen Load</span><span class="info-val" id="iQL">18%</span></div>
+          <div class="info-row"><span class="info-key">Active / Total</span><span class="info-val green" id="iA">6 / 6</span></div>
+          <div class="info-row"><span class="info-key">Failed</span><span class="info-val red" id="iF">0</span></div>
+          <div class="info-row"><span class="info-key">Packets Sent</span><span class="info-val" id="iP">0</span></div>
+          <div class="info-row"><span class="info-key">Last Path</span><span class="info-val" id="iR">—</span></div>
+          <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="iS">Nominal</span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Node Load Meters</div>
+          <div id="nlm" style="display:flex;flex-direction:column;gap:.55rem;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="net-canvas-wrap">
+      <div>
+        <div class="canvas-container reveal">
+          <canvas id="networkCanvas"></canvas>
+        </div>
+        <div class="bottom-row">
+          <div class="panel reveal d1">
+            <div class="panel-title">Current Packet Route</div>
+            <div class="path-nodes" id="pathNodes"><span class="path-empty">Awaiting next packet…</span></div>
+          </div>
+          <div class="panel reveal d2">
+            <div class="panel-title">Legend</div>
+            <div class="legend-item"><div class="lg-dot" style="background:#F5A623;box-shadow:0 0 8px #F5A623;"></div>Queen node (elected leader)</div>
+            <div class="legend-item"><div class="lg-dot" style="background:rgba(91,173,240,.9);"></div>Normal active node</div>
+            <div class="legend-item"><div class="lg-dot" style="background:rgba(224,84,84,.9);"></div>Failed / offline node</div>
+            <div class="legend-item"><div class="lg-line" style="background:rgba(245,166,35,.8);height:3px;"></div>Active route with dotted trail</div>
+            <div class="legend-item"><div class="lg-dash"></div>Low-score fallback path</div>
+            <div class="legend-item"><div class="lg-dot" style="background:#FFD27F;width:8px;height:8px;"></div>Data packet sprite</div>
+            <div class="legend-item"><div class="lg-dot" style="background:#C792EA;width:8px;height:8px;"></div>Queen bee sprite</div>
+          </div>
+        </div>
+      </div>
+      <div class="right-col reveal d1">
+        <div class="log-wrap">
+          <div class="log-header"><div class="log-title">Event Log</div><button class="log-clear" onclick="document.getElementById('logBody').innerHTML=''">Clear</button></div>
+          <div class="log-body" id="logBody"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-inner" id="ticker-inner"></div>
-</div>
-
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-num" id="stat-packets">0</div>
-    <div class="stat-label">Packets Routed</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">6</div>
-    <div class="stat-label">Active Nodes</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num" id="stat-uptime">99.9%</div>
-    <div class="stat-label">Network Uptime</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">~2ms</div>
-    <div class="stat-label">Avg. Latency</div>
-  </div>
-</div>
-
-<!-- ARCHITECTURE -->
 <section class="arch-section" id="architecture">
   <div class="reveal">
     <div class="section-label">System Design</div>
     <h2 class="section-title">Six nodes.<br><em>One hive mind.</em></h2>
-    <p class="section-desc">Each BeeNode runs independently, learns from past routing success, and self-heals when neighbors fail — no central brain required.</p>
+    <p class="section-desc">Each BeeNode runs independently in its own thread, learns from routing outcomes, and self-heals when neighbors fail.</p>
   </div>
-
-  <div class="nodes-grid reveal reveal-delay-1">
-    <div class="node-card">
-      <div class="node-id">NODE_01 · PORT 5101</div>
-      <div class="node-name">Alpha Node</div>
-      <div class="node-desc">Primary entry point. Handles inbound packet distribution and maintains neighbor score tables.</div>
-      <div class="load-bar"><div class="load-fill" style="width: 34%"></div></div>
-      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 34%</div>
-      <div class="node-hex-bg">01</div>
-    </div>
-    <div class="node-card">
-      <div class="node-id">NODE_02 · PORT 5102</div>
-      <div class="node-name">Beta Node</div>
-      <div class="node-desc">Mid-layer relay. Bridges Alpha cluster with Gamma cluster via score-weighted routing decisions.</div>
-      <div class="load-bar"><div class="load-fill" style="width: 61%"></div></div>
-      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 61%</div>
-      <div class="node-hex-bg">02</div>
-    </div>
-    <div class="node-card">
-      <div class="node-id">NODE_03 · PORT 5103</div>
-      <div class="node-name">Gamma — Queen 👑</div>
-      <div class="node-desc">Currently elected Queen. Lowest load node coordinates priority traffic and re-election on failure.</div>
-      <div class="load-bar"><div class="load-fill" style="width: 18%"></div></div>
-      <div class="node-status status-queen"><span class="status-dot"></span> Queen — Load 18%</div>
-      <div class="node-hex-bg">03</div>
-    </div>
-    <div class="node-card">
-      <div class="node-id">NODE_04 · PORT 5104</div>
-      <div class="node-name">Delta Node</div>
-      <div class="node-desc">Redundant path handler. Activates alternate routes when primary paths show elevated latency.</div>
-      <div class="load-bar"><div class="load-fill" style="width: 47%"></div></div>
-      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 47%</div>
-      <div class="node-hex-bg">04</div>
-    </div>
-    <div class="node-card">
-      <div class="node-id">NODE_05 · PORT 5105</div>
-      <div class="node-name">Epsilon Node</div>
-      <div class="node-desc">Deep mesh node. Connects remote clusters and maintains long-path score memory for efficiency.</div>
-      <div class="load-bar"><div class="load-fill" style="width: 72%"></div></div>
-      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 72%</div>
-      <div class="node-hex-bg">05</div>
-    </div>
-    <div class="node-card">
-      <div class="node-id">NODE_06 · PORT 5106</div>
-      <div class="node-name">Zeta Node</div>
-      <div class="node-desc">Destination endpoint. Logs all arriving packets to SQLite and issues delivery confirmations.</div>
-      <div class="load-bar"><div class="load-fill" style="width: 29%"></div></div>
-      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 29%</div>
-      <div class="node-hex-bg">06</div>
-    </div>
+  <div class="nodes-grid reveal d1">
+    <div class="node-card"><div class="node-id">NODE_01 · PORT 5101</div><div class="node-name">Alpha Node</div><div class="node-desc">Primary entry point. Handles inbound packet distribution and maintains neighbor score tables.</div><div class="load-bar"><div class="load-fill" style="width:34%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 34%</div><div class="nbg">01</div></div>
+    <div class="node-card"><div class="node-id">NODE_02 · PORT 5102</div><div class="node-name">Beta Node</div><div class="node-desc">Mid-layer relay. Bridges Alpha cluster with Gamma via score-weighted routing decisions.</div><div class="load-bar"><div class="load-fill" style="width:61%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 61%</div><div class="nbg">02</div></div>
+    <div class="node-card"><div class="node-id">NODE_03 · PORT 5103</div><div class="node-name">Gamma — Queen 👑</div><div class="node-desc">Currently elected Queen. Lowest load node — coordinates priority traffic and re-election on failure.</div><div class="load-bar"><div class="load-fill" style="width:18%"></div></div><div class="node-status sq"><span class="sd"></span>Queen — Load 18%</div><div class="nbg">03</div></div>
+    <div class="node-card"><div class="node-id">NODE_04 · PORT 5104</div><div class="node-name">Delta Node</div><div class="node-desc">Redundant path handler. Activates alternate routes when primary paths show elevated latency.</div><div class="load-bar"><div class="load-fill" style="width:47%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 47%</div><div class="nbg">04</div></div>
+    <div class="node-card"><div class="node-id">NODE_05 · PORT 5105</div><div class="node-name">Epsilon Node</div><div class="node-desc">Deep mesh node. Connects remote clusters and maintains long-path score memory for efficiency.</div><div class="load-bar"><div class="load-fill" style="width:72%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 72%</div><div class="nbg">05</div></div>
+    <div class="node-card"><div class="node-id">NODE_06 · PORT 5106</div><div class="node-name">Zeta Node</div><div class="node-desc">Destination endpoint. Logs all arriving packets to SQLite and issues delivery confirmations.</div><div class="load-bar"><div class="load-fill" style="width:29%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 29%</div><div class="nbg">06</div></div>
   </div>
 </section>
 
-<!-- TOPOLOGY -->
-<section class="topology-section" id="topology">
-  <div class="topo-inner">
-    <div class="topo-layout">
-      <div class="reveal">
-        <div class="section-label">Live Topology</div>
-        <h2 class="section-title">Mesh that <em>heals itself</em></h2>
-        <p class="section-desc">
-          Packets flow across weighted edges. Each node scores its neighbors based on past success — busy paths get penalized, reliable paths get rewarded.
-        </p>
-        <br><br>
-        <div style="display:flex; flex-direction:column; gap:1rem; margin-top:0.5rem;">
-          <div style="display:flex; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,248,236,0.5);">
-            <div style="width:24px;height:2px;background:var(--honey);border-radius:1px;"></div>
-            High-score path (preferred)
-          </div>
-          <div style="display:flex; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,248,236,0.5);">
-            <div style="width:24px;height:2px;background:rgba(255,248,236,0.15);border-radius:1px; border-top: 1px dashed rgba(255,248,236,0.3);"></div>
-            Low-score path (fallback)
-          </div>
-          <div style="display:flex; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,248,236,0.5);">
-            <div style="width:10px;height:10px;border-radius:50%;background:var(--honey);box-shadow:0 0 8px var(--honey);"></div>
-            Queen node (elected leader)
-          </div>
-        </div>
-        <br>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
-          <button class="btn-primary" style="font-size:0.8rem;padding:0.65rem 1.4rem;" onclick="simulatePacket()">Send Packet</button>
-          <button class="btn-secondary" style="font-size:0.8rem;padding:0.65rem 1.4rem;" onclick="simulateFailure()">Fail a Node</button>
-        </div>
-      </div>
-
-      <div class="topo-canvas reveal reveal-delay-2">
-        <svg id="network-svg" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <filter id="glow-filter">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-              <path d="M2 1L8 5L2 9" fill="none" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round"/>
-            </marker>
-          </defs>
-
-          <!-- Edges -->
-          <g id="edges">
-            <!-- 1-2 -->
-            <line x1="120" y1="140" x2="240" y2="100" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
-            <!-- 1-3 -->
-            <line x1="120" y1="140" x2="200" y2="220" stroke="rgba(245,166,35,0.25)" stroke-width="1" stroke-dasharray="4,4"/>
-            <!-- 2-3 -->
-            <line x1="240" y1="100" x2="200" y2="220" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
-            <!-- 2-4 -->
-            <line x1="240" y1="100" x2="360" y2="140" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
-            <!-- 3-5 -->
-            <line x1="200" y1="220" x2="240" y2="320" stroke="rgba(245,166,35,0.25)" stroke-width="1" stroke-dasharray="4,4"/>
-            <!-- 4-6 -->
-            <line x1="360" y1="140" x2="380" y2="300" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
-            <!-- 5-6 -->
-            <line x1="240" y1="320" x2="380" y2="300" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
-            <!-- 3-4 -->
-            <line x1="200" y1="220" x2="360" y2="140" stroke="rgba(245,166,35,0.35)" stroke-width="1"/>
-          </g>
-
-          <!-- Animated packets -->
-          <g id="packets"></g>
-
-          <!-- Nodes -->
-          <g id="nodes">
-            <!-- Node 1 -->
-            <g class="net-node" onclick="selectNode(1)">
-              <circle cx="120" cy="140" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
-              <text x="120" y="145" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">01</text>
-            </g>
-            <!-- Node 2 -->
-            <g class="net-node" onclick="selectNode(2)">
-              <circle cx="240" cy="100" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
-              <text x="240" y="105" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">02</text>
-            </g>
-            <!-- Node 3 — QUEEN -->
-            <g class="net-node" id="queen-node" onclick="selectNode(3)">
-              <circle class="pulse-ring" cx="200" cy="220" r="32" fill="none" stroke="rgba(245,166,35,0.2)" stroke-width="1"/>
-              <circle cx="200" cy="220" r="26" fill="rgba(245,166,35,0.15)" stroke="var(--honey)" stroke-width="2" filter="url(#glow-filter)"/>
-              <text x="200" y="215" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">03</text>
-              <text x="200" y="228" text-anchor="middle" font-family="Syne" font-size="8" fill="#FFD27F">QUEEN</text>
-            </g>
-            <!-- Node 4 -->
-            <g class="net-node" onclick="selectNode(4)">
-              <circle cx="360" cy="140" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
-              <text x="360" y="145" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">04</text>
-            </g>
-            <!-- Node 5 -->
-            <g class="net-node" onclick="selectNode(5)">
-              <circle cx="240" cy="320" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
-              <text x="240" y="325" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">05</text>
-            </g>
-            <!-- Node 6 -->
-            <g class="net-node" onclick="selectNode(6)">
-              <circle cx="380" cy="300" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
-              <text x="380" y="305" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">06</text>
-            </g>
-          </g>
-
-          <!-- Labels -->
-          <g font-family="Syne" font-size="9" fill="rgba(255,248,236,0.3)">
-            <text x="88" y="140">Alpha</text>
-            <text x="248" y="90">Beta</text>
-            <text x="162" y="220">Gamma</text>
-            <text x="368" y="132">Delta</text>
-            <text x="248" y="348">Epsilon</text>
-            <text x="390" y="316">Zeta</text>
-          </g>
-        </svg>
-
-        <!-- Log feed -->
-        <div id="log-feed" style="margin-top:1rem; background:rgba(0,0,0,0.4); border:0.5px solid var(--border); border-radius:10px; padding:1rem; height:100px; overflow-y:auto;">
-          <div id="log-lines" style="font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.9; color:rgba(255,248,236,0.4);">
-            <div><span style="color:var(--success)">✓</span> System initialized. Queen elected: Node 03</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features-section" id="features">
-  <div class="reveal">
-    <div class="section-label">Capabilities</div>
-    <h2 class="section-title">Built like a <em>colony</em></h2>
-  </div>
-
+<section class="features-section">
+  <div class="reveal"><div class="section-label">Capabilities</div><h2 class="section-title">Built like a <em>colony</em></h2></div>
   <div class="features-grid">
-    <div class="feature-card featured reveal reveal-delay-1">
-      <div>
-        <div class="feature-icon">🐝</div>
-        <div class="feature-title">Swarm Intelligence Routing</div>
-        <div class="feature-desc">
-          Every node independently scores its neighbors using a reinforcement formula: <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--honey-light)">value = route_score − load_penalty</code>. Reliable paths are rewarded; congested ones are avoided automatically.
-        </div>
-        <div class="feature-tag">Core Algorithm</div>
-      </div>
-      <div>
-        <div style="background:rgba(0,0,0,0.4);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;">
-          <div style="font-family:'DM Mono',monospace;font-size:0.75rem;line-height:2;color:rgba(255,248,236,0.5);">
-            <div><span style="color:var(--info)">def</span> <span style="color:#C792EA">choose_next</span>(self, neighbors):</div>
-            <div style="padding-left:1.2rem;">scores = {}</div>
-            <div style="padding-left:1.2rem;"><span style="color:var(--info)">for</span> n <span style="color:var(--info)">in</span> neighbors:</div>
-            <div style="padding-left:2.4rem;">score = self.route_scores[n]</div>
-            <div style="padding-left:2.4rem;">penalty = n.load * 0.5</div>
-            <div style="padding-left:2.4rem; color:var(--honey-light);">scores[n] = score - penalty</div>
-            <div style="padding-left:1.2rem;"><span style="color:var(--info)">return</span> max(scores, key=scores.get)</div>
-          </div>
-        </div>
-      </div>
+    <div class="feature-card wide reveal d1">
+      <div><div class="f-icon">🐝</div><div class="f-title">Swarm Intelligence Routing</div><div class="f-desc">Every node independently scores neighbors: <code style="font-family:'DM Mono',monospace;font-size:.74rem;color:var(--honey-light)">value = route_score − load_penalty</code>. Reliable paths are rewarded; congested ones penalized automatically.</div><div class="f-tag">Core Algorithm</div></div>
+      <div style="background:rgba(0,0,0,.4);border:.5px solid var(--border);border-radius:12px;padding:1.4rem;"><div style="font-family:'DM Mono',monospace;font-size:.73rem;line-height:2;color:rgba(255,248,236,.5);"><div><span style="color:var(--info)">def</span> <span style="color:#C792EA">choose_next</span>(self, neighbors):</div><div style="padding-left:1.2rem;">scores = {}</div><div style="padding-left:1.2rem;"><span style="color:var(--info)">for</span> n <span style="color:var(--info)">in</span> neighbors:</div><div style="padding-left:2.4rem;">score = self.route_scores[n]</div><div style="padding-left:2.4rem;">penalty = n.load * 0.5</div><div style="padding-left:2.4rem;color:var(--honey-light);">scores[n] = score - penalty</div><div style="padding-left:1.2rem;"><span style="color:var(--info)">return</span> max(scores, key=scores.get)</div></div></div>
     </div>
-
-    <div class="feature-card reveal">
-      <div class="feature-icon">👑</div>
-      <div class="feature-title">Queen Election</div>
-      <div class="feature-desc">The least-loaded active node is elected Queen. If she fails, re-election happens in milliseconds — zero downtime, zero manual intervention.</div>
-      <div class="feature-tag">Fault Tolerance</div>
-    </div>
-
-    <div class="feature-card reveal reveal-delay-1">
-      <div class="feature-icon">🔌</div>
-      <div class="feature-title">Real TCP Sockets</div>
-      <div class="feature-desc">Packets travel as actual JSON over TCP localhost sockets — not just function calls. Each node listens on its own port (5101–5106).</div>
-      <div class="feature-tag">Real Networking</div>
-    </div>
-
-    <div class="feature-card reveal">
-      <div class="feature-icon">🗄️</div>
-      <div class="feature-title">SQLite Persistence</div>
-      <div class="feature-desc">Every packet delivery, node crash, and queen election is timestamped and persisted to three SQLite tables — full audit trail included.</div>
-      <div class="feature-tag">Data Layer</div>
-    </div>
-
-    <div class="feature-card reveal reveal-delay-1">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">Flask REST API</div>
-      <div class="feature-desc">Control the entire network over HTTP — send packets, crash nodes, inspect the queen, and view logs from Postman or any client.</div>
-      <div class="feature-tag">Interface</div>
-    </div>
+    <div class="feature-card reveal"><div class="f-icon">👑</div><div class="f-title">Queen Election</div><div class="f-desc">Least-loaded active node becomes Queen. If she fails, re-election happens in milliseconds — zero downtime, zero manual intervention.</div><div class="f-tag">Fault Tolerance</div></div>
+    <div class="feature-card reveal d1"><div class="f-icon">🔌</div><div class="f-title">Real TCP Sockets</div><div class="f-desc">Packets travel as actual JSON over TCP localhost sockets. Each node listens on its own port (5101–5106) — genuine network communication.</div><div class="f-tag">Real Networking</div></div>
+    <div class="feature-card reveal"><div class="f-icon">🗄️</div><div class="f-title">SQLite Persistence</div><div class="f-desc">Every delivery, crash, and election is timestamped across three SQLite tables — full audit trail with zero external dependencies.</div><div class="f-tag">Data Layer</div></div>
+    <div class="feature-card reveal d1"><div class="f-icon">⚡</div><div class="f-title">Flask REST API</div><div class="f-desc">Control the entire network over HTTP — send packets, crash nodes, inspect the queen, and query logs from any HTTP client.</div><div class="f-tag">Interface</div></div>
   </div>
 </section>
 
-<!-- API -->
 <section class="api-section" id="api">
   <div class="api-inner">
-    <div class="reveal">
-      <div class="section-label">REST API</div>
-      <h2 class="section-title">Control the hive <em>over HTTP</em></h2>
-    </div>
-
+    <div class="reveal"><div class="section-label">REST API</div><h2 class="section-title">Control the hive <em>over HTTP</em></h2></div>
     <div class="api-grid">
-      <div class="api-endpoints reveal reveal-delay-1">
-        <div class="endpoint active" onclick="showCode('status')">
-          <span class="method get">GET</span>
-          <span class="endpoint-path">/status</span>
-          <span class="endpoint-desc">All nodes</span>
-        </div>
-        <div class="endpoint" onclick="showCode('queen')">
-          <span class="method get">GET</span>
-          <span class="endpoint-path">/queen</span>
-          <span class="endpoint-desc">Leader info</span>
-        </div>
-        <div class="endpoint" onclick="showCode('send')">
-          <span class="method post">POST</span>
-          <span class="endpoint-path">/send_packet</span>
-          <span class="endpoint-desc">Route packet</span>
-        </div>
-        <div class="endpoint" onclick="showCode('fail')">
-          <span class="method post">POST</span>
-          <span class="endpoint-path">/fail_node/:id</span>
-          <span class="endpoint-desc">Crash node</span>
-        </div>
-        <div class="endpoint" onclick="showCode('failqueen')">
-          <span class="method post">POST</span>
-          <span class="endpoint-path">/fail_queen</span>
-          <span class="endpoint-desc">Re-election</span>
-        </div>
-        <div class="endpoint" onclick="showCode('logs')">
-          <span class="method get">GET</span>
-          <span class="endpoint-path">/logs/packets</span>
-          <span class="endpoint-desc">Packet log</span>
-        </div>
-        <div class="endpoint" onclick="showCode('topology')">
-          <span class="method get">GET</span>
-          <span class="endpoint-path">/topology</span>
-          <span class="endpoint-desc">Network map</span>
-        </div>
+      <div class="api-endpoints reveal d1">
+        <div class="endpoint active" onclick="showCode('status',this)"><span class="method mg">GET</span><span class="ep-path">/status</span><span class="ep-desc">All nodes</span></div>
+        <div class="endpoint" onclick="showCode('queen',this)"><span class="method mg">GET</span><span class="ep-path">/queen</span><span class="ep-desc">Leader info</span></div>
+        <div class="endpoint" onclick="showCode('send',this)"><span class="method mp">POST</span><span class="ep-path">/send_packet</span><span class="ep-desc">Route packet</span></div>
+        <div class="endpoint" onclick="showCode('fail',this)"><span class="method mp">POST</span><span class="ep-path">/fail_node/:id</span><span class="ep-desc">Crash node</span></div>
+        <div class="endpoint" onclick="showCode('failqueen',this)"><span class="method mp">POST</span><span class="ep-path">/fail_queen</span><span class="ep-desc">Re-election</span></div>
+        <div class="endpoint" onclick="showCode('logs',this)"><span class="method mg">GET</span><span class="ep-path">/logs/packets</span><span class="ep-desc">Packet log</span></div>
+        <div class="endpoint" onclick="showCode('topology',this)"><span class="method mg">GET</span><span class="ep-path">/topology</span><span class="ep-desc">Network map</span></div>
       </div>
-
-      <div class="code-block reveal reveal-delay-2" id="code-block">
-        <div class="code-header">
-          <div class="code-dots"><span></span><span></span><span></span></div>
-          <div class="code-lang" id="code-lang">GET /status → 200 OK</div>
-        </div>
-        <div class="code-body" id="code-body">
-<span class="c-comment">// Response</span>
+      <div class="code-block reveal d2">
+        <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-lang" id="clabel">GET /status → 200 OK</div></div>
+        <div class="code-body" id="cbody"><span class="cc">// Response — all node states</span>
 {
-  <span class="c-key">"nodes"</span>: {
-    <span class="c-key">"1"</span>: {
-      <span class="c-key">"id"</span>: <span class="c-num">1</span>,
-      <span class="c-key">"load"</span>: <span class="c-num">34</span>,
-      <span class="c-key">"is_queen"</span>: <span class="c-num">false</span>,
-      <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>
-    },
-    <span class="c-key">"3"</span>: {
-      <span class="c-key">"id"</span>: <span class="c-num">3</span>,
-      <span class="c-key">"load"</span>: <span class="c-num">18</span>,
-      <span class="c-key">"is_queen"</span>: <span class="c-num">true</span>,
-      <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>
-    }
+  <span class="ck">"nodes"</span>: {
+    <span class="ck">"1"</span>: { <span class="ck">"load"</span>: <span class="cn">34</span>, <span class="ck">"is_queen"</span>: <span class="cn">false</span>, <span class="ck">"status"</span>: <span class="cs">"normal"</span> },
+    <span class="ck">"3"</span>: { <span class="ck">"load"</span>: <span class="cn">18</span>, <span class="ck">"is_queen"</span>: <span class="cn">true</span>,  <span class="ck">"status"</span>: <span class="cs">"normal"</span> }
   }
-}
-        </div>
+}</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
 <section class="faq-section" id="faq">
-  <div class="reveal">
-    <div class="section-label">Faculty Q&A</div>
-    <h2 class="section-title">Expected <em>questions</em></h2>
-  </div>
-
-  <div class="faq-grid reveal reveal-delay-1">
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Why bees? <span class="faq-plus">+</span></div>
-      <div class="faq-a">Bees use swarm intelligence — no central control, each bee makes local decisions that result in globally optimal behavior. Our nodes do the same: each one independently scores paths, penalizes load, and routes packets without any global coordinator.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">How is this different from Dijkstra? <span class="faq-plus">+</span></div>
-      <div class="faq-a">Dijkstra finds the shortest static path. Our algorithm adapts dynamically based on real-time load and historical delivery success. It's closer to reinforcement learning at the network level — paths improve over time based on outcomes.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What is the Queen's role? <span class="faq-plus">+</span></div>
-      <div class="faq-a">The Queen is the least-loaded active node at any time. She acts as coordinator for priority traffic. If she fails, re-election is immediate and automatic — the next least-loaded node is crowned. The network never stops working.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What is the routing algorithm exactly? <span class="faq-plus">+</span></div>
-      <div class="faq-a">Score-based greedy routing with load penalty: value = route_score − load_penalty. Each node picks the neighbor with the highest value. When a packet is delivered successfully, all nodes on the path get their route scores increased — reinforcement learning style.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">Why SQLite and not a real database? <span class="faq-plus">+</span></div>
-      <div class="faq-a">SQLite is lightweight, needs zero installation, and is built into Python's standard library — perfect for a simulation and demo environment. For production, the same schema works directly with PostgreSQL.</div>
-    </div>
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-q">What happens if all nodes fail? <span class="faq-plus">+</span></div>
-      <div class="faq-a">The election function returns None, and the Flask API returns a graceful error response with a clear message. The system handles total network collapse without crashing — it waits for at least one node to recover.</div>
-    </div>
+  <div class="reveal"><div class="section-label">Faculty Q&amp;A</div><h2 class="section-title">Expected <em>questions</em></h2></div>
+  <div class="faq-grid reveal d1">
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Why bees? <span class="faq-plus">+</span></div><div class="faq-a">Bees use swarm intelligence — no central control, each bee makes local decisions resulting in globally optimal behavior. Our nodes do the same: each independently scores paths, penalizes load, and routes packets without a global coordinator.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">How is this different from Dijkstra? <span class="faq-plus">+</span></div><div class="faq-a">Dijkstra finds the shortest static path. Our algorithm adapts dynamically based on real-time load and historical delivery success — closer to reinforcement learning at the network level. Paths improve over time based on outcomes.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">What is the Queen's role? <span class="faq-plus">+</span></div><div class="faq-a">The Queen is the least-loaded active node. She coordinates priority traffic. If she fails, re-election is immediate and automatic — the next least-loaded node is crowned within milliseconds.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">What is the routing algorithm exactly? <span class="faq-plus">+</span></div><div class="faq-a">Score-based greedy routing with load penalty: value = route_score − load_penalty. Each node picks the neighbor with the highest value. When a packet is delivered, all nodes on the path get their scores incremented — reinforcement learning style.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">Why SQLite and not PostgreSQL? <span class="faq-plus">+</span></div><div class="faq-a">SQLite is lightweight, needs zero installation, and is built into Python's standard library — perfect for a simulation environment. The same schema migrates directly to PostgreSQL for production.</div></div>
+    <div class="faq-item" onclick="this.classList.toggle('open')"><div class="faq-q">What happens if all nodes fail? <span class="faq-plus">+</span></div><div class="faq-a">The election function returns None and the Flask API returns a graceful error response. The system handles total network collapse without crashing — it waits for at least one node to recover.</div></div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">🐝 BeeHive Network</div>
-  <div class="footer-note">Swarm Intelligence Protocol · Built with Python, Flask, NetworkX, SQLite</div>
+  <div class="f-logo">🐝 BeeHive Network</div>
+  <div class="f-note">Swarm Intelligence Protocol · Python · Flask · NetworkX · SQLite · TCP Sockets</div>
 </footer>
 
 <script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function animCursor() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    requestAnimationFrame(animCursor);
-  }
-  animCursor();
-  document.querySelectorAll('a,button,.faq-item,.endpoint,.net-node,.node-card').forEach(el => {
-    el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; });
-    el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; });
-  });
+/* ─── CURSOR ─── */
+const curEl=document.getElementById('cursor'),ringEl=document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function ac(){curEl.style.left=mx+'px';curEl.style.top=my+'px';rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ringEl.style.left=rx+'px';ringEl.style.top=ry+'px';requestAnimationFrame(ac);})();
+document.querySelectorAll('a,button,.faq-item,.endpoint').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{curEl.style.width='20px';curEl.style.height='20px';});
+  el.addEventListener('mouseleave',()=>{curEl.style.width='12px';curEl.style.height='12px';});
+});
 
-  // Floating nodes
-  const floatCont = document.getElementById('floating-nodes');
-  const colors = ['#F5A623','#FFD27F','#E8891A','#FFC857','#FF9500'];
-  for(let i = 0; i < 18; i++) {
-    const d = document.createElement('div');
-    d.className = 'f-node';
-    const size = 4 + Math.random() * 10;
-    d.style.cssText = `
-      width:${size}px;height:${size}px;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      left:${Math.random()*100}%;
-      animation-duration:${8 + Math.random()*12}s;
-      animation-delay:${Math.random()*-12}s;
-      opacity:0.15;
-    `;
-    floatCont.appendChild(d);
-  }
+/* ─── FLOATING NODES ─── */
+const fc=document.getElementById('fnodes');
+['#F5A623','#FFD27F','#E8891A','#FFC857','#FF9500'].forEach((c,ci)=>{
+  for(let i=0;i<4;i++){const d=document.createElement('div');d.className='f-node';const s=4+Math.random()*10;d.style.cssText=`width:${s}px;height:${s}px;background:${c};left:${Math.random()*100}%;animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*-14}s;opacity:.15;`;fc.appendChild(d);}
+});
 
-  // Ticker
-  const tData = ['NODE_01 ACTIVE','NODE_02 ACTIVE','NODE_03 QUEEN ELECTED','NODE_04 ACTIVE','NODE_05 ACTIVE','NODE_06 ACTIVE','PACKET ROUTED 1→3→6','LOAD BALANCED','SWARM PROTOCOL RUNNING','TCP SOCKETS OPEN','SQLITE DB CONNECTED','FLASK API PORT 5000'];
-  const tickerEl = document.getElementById('ticker-inner');
-  const full = [...tData,...tData].map(t=>`<span class="ticker-item"><span class="ticker-dot"></span>${t}</span>`).join('');
-  tickerEl.innerHTML = full;
+/* ─── TICKER ─── */
+const td=['NODE_01 ACTIVE','NODE_02 ACTIVE','QUEEN ELECTED NODE_03','NODE_04 ACTIVE','NODE_05 ACTIVE','NODE_06 ACTIVE','PACKET 1→3→6 DELIVERED','SWARM ROUTING ENABLED','TCP SOCKETS OPEN','SQLITE CONNECTED','FLASK API :5000','WAGGLE DANCE ROUTING','LOAD BALANCED','FAULT TOLERANCE ON'];
+document.getElementById('ticker').innerHTML=[...td,...td].map(t=>`<span class="t-item"><span class="t-dot"></span>${t}</span>`).join('');
 
-  // Packet counter animation
-  let pCount = 0;
-  const pEl = document.getElementById('stat-packets');
-  function incPackets() {
-    pCount += Math.floor(Math.random()*3)+1;
-    pEl.textContent = pCount.toLocaleString();
-    setTimeout(incPackets, 1200 + Math.random()*800);
-  }
-  incPackets();
+/* ─── REVEAL ─── */
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.08});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.12 });
-  reveals.forEach(r => obs.observe(r));
+/* ════════════════════════════════════════════
+   CANVAS ENGINE
+════════════════════════════════════════════ */
+const canvas=document.getElementById('networkCanvas');
+const ctx=canvas.getContext('2d');
+let W,H;
+function resize(){
+  const rect=canvas.parentElement.getBoundingClientRect();
+  W=Math.min(rect.width,860);H=560;
+  canvas.width=W;canvas.height=H;
+}
+resize();window.addEventListener('resize',resize);
 
-  // FAQ
-  function toggleFaq(el) {
-    el.classList.toggle('open');
-  }
+/* ─── NODES ─── */
+const ND={
+  1:{id:1,x:.15,y:.36,label:'Alpha', load:34,queen:false,failed:false},
+  2:{id:2,x:.36,y:.18,label:'Beta',  load:61,queen:false,failed:false},
+  3:{id:3,x:.33,y:.52,label:'Gamma', load:18,queen:true, failed:false},
+  4:{id:4,x:.60,y:.23,label:'Delta', load:47,queen:false,failed:false},
+  5:{id:5,x:.52,y:.62,label:'Epsilon',load:72,queen:false,failed:false},
+  6:{id:6,x:.81,y:.47,label:'Zeta',  load:29,queen:false,failed:false},
+};
+const EDGES=[
+  {a:1,b:2,score:8},{a:1,b:3,score:4},
+  {a:2,b:3,score:6},{a:2,b:4,score:9},
+  {a:3,b:4,score:5},{a:3,b:5,score:7},
+  {a:4,b:6,score:9},{a:5,b:6,score:8},
+  {a:2,b:5,score:3},{a:4,b:5,score:6},
+];
+function nx(n){return n.x*W;}
+function ny(n){return n.y*H;}
 
-  // Network simulation
-  const nodePositions = {1:{x:120,y:140},2:{x:240,y:100},3:{x:200,y:220},4:{x:360,y:140},5:{x:240,y:320},6:{x:380,y:300}};
-  const routes = [[1,2,4,6],[1,3,5,6],[1,2,3,5,6]];
-  let activeFailNode = null;
-
-  function addLog(msg, type='info') {
-    const ll = document.getElementById('log-lines');
-    const icon = type==='success'?'<span style="color:var(--success)">✓</span>':type==='error'?'<span style="color:var(--danger)">✗</span>':'<span style="color:var(--honey)">→</span>';
-    const d = document.createElement('div');
-    d.innerHTML = `${icon} ${msg}`;
-    ll.appendChild(d);
-    ll.parentElement.scrollTop = ll.parentElement.scrollHeight;
-    if(ll.children.length > 20) ll.removeChild(ll.firstChild);
-  }
-
-  function simulatePacket() {
-    const route = routes[Math.floor(Math.random()*routes.length)];
-    const svg = document.getElementById('network-svg');
-    const packetsG = document.getElementById('packets');
-    addLog(`Packet: Node ${route[0]} → Node ${route[route.length-1]} via [${route.join('→')}]`, 'info');
-
-    for(let i = 0; i < route.length - 1; i++) {
-      const a = nodePositions[route[i]], b = nodePositions[route[i+1]];
-      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-      circle.setAttribute('r','5');
-      circle.setAttribute('fill','#FFD27F');
-      circle.setAttribute('opacity','0.9');
-      packetsG.appendChild(circle);
-      const delay = i * 600;
-      setTimeout(() => {
-        let t = 0;
-        const step = () => {
-          t += 0.03;
-          if(t > 1) { packetsG.removeChild(circle); return; }
-          const x = a.x + (b.x-a.x)*t, y = a.y + (b.y-a.y)*t;
-          circle.setAttribute('cx', x);
-          circle.setAttribute('cy', y);
-          requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      }, delay);
-    }
-    setTimeout(() => addLog(`Delivered to Node ${route[route.length-1]}`, 'success'), route.length * 600);
-  }
-
-  function simulateFailure() {
-    const ids = [1,2,4,5];
-    const id = ids[Math.floor(Math.random()*ids.length)];
-    const nodes = document.getElementById('nodes');
-    const allCircles = nodes.querySelectorAll('circle');
-    allCircles[id-1] && allCircles.forEach((c,i) => {
-      if(i === id-1) { c.setAttribute('stroke','rgba(224,84,84,0.8)'); c.setAttribute('fill','rgba(224,84,84,0.1)'); }
+/* ─── BFS ─── */
+function findRoute(src,dst){
+  if(ND[src].failed||ND[dst].failed)return null;
+  const vis=new Set([src]),q=[[src]];
+  while(q.length){
+    const path=q.shift(),cur=path[path.length-1];
+    if(cur===dst)return path;
+    const nbrs=[];
+    EDGES.forEach(e=>{
+      if(e.a===cur&&!ND[e.b].failed&&!vis.has(e.b))nbrs.push({to:e.b,score:e.score});
+      if(e.b===cur&&!ND[e.a].failed&&!vis.has(e.a))nbrs.push({to:e.a,score:e.score});
     });
-    addLog(`Node ${id} failed! Rerouting...`, 'error');
-    setTimeout(() => {
-      allCircles.forEach((c,i) => {
-        if(i === id-1) { c.setAttribute('stroke','rgba(245,166,35,0.6)'); c.setAttribute('fill','rgba(13,8,0,0.9)'); }
-      });
-      addLog(`Node ${id} recovered. Network self-healed.`, 'success');
-    }, 3000);
+    nbrs.sort((a,b)=>b.score-a.score).forEach(({to})=>{vis.add(to);q.push([...path,to]);});
   }
-
-  // API code blocks
-  const codeData = {
-    status: { label: 'GET /status → 200 OK', body: `<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"nodes"</span>: {
-    <span class="c-key">"1"</span>: {
-      <span class="c-key">"id"</span>: <span class="c-num">1</span>,
-      <span class="c-key">"load"</span>: <span class="c-num">34</span>,
-      <span class="c-key">"is_queen"</span>: <span class="c-num">false</span>,
-      <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>
-    },
-    <span class="c-key">"3"</span>: {
-      <span class="c-key">"load"</span>: <span class="c-num">18</span>,
-      <span class="c-key">"is_queen"</span>: <span class="c-num">true</span>
-    }
-  }
-}` },
-    queen: { label: 'GET /queen → 200 OK', body: `<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"queen"</span>: {
-    <span class="c-key">"id"</span>: <span class="c-num">3</span>,
-    <span class="c-key">"load"</span>: <span class="c-num">18</span>,
-    <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>,
-    <span class="c-key">"elected_at"</span>: <span class="c-str">"2026-03-10T09:23:07"</span>
-  }
-}` },
-    send: { label: 'POST /send_packet → 200 OK', body: `<span class="c-comment">// Request body</span>
-{
-  <span class="c-key">"source"</span>: <span class="c-num">1</span>,
-  <span class="c-key">"destination"</span>: <span class="c-num">6</span>
+  return null;
 }
 
-<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"status"</span>: <span class="c-str">"delivered"</span>,
-  <span class="c-key">"path"</span>: [<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">4</span>, <span class="c-num">6</span>],
-  <span class="c-key">"hops"</span>: <span class="c-num">3</span>
-}` },
-    fail: { label: 'POST /fail_node/3 → 200 OK', body: `<span class="c-comment">// No body required</span>
-<span class="c-comment">// POST /fail_node/3</span>
+/* ─── STATE ─── */
+let SPEED=1.5,totalPkts=0,busy=false;
+const packets=[]; // {path,t,id}
+let queenAnim=null; // {path,t}
+let failAnim=null;  // {nodeId,t}
+let electAnim=null; // {from,to,t}
+let pathHL=null;
 
-<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"message"</span>: <span class="c-str">"Node 3 failed"</span>,
-  <span class="c-key">"new_queen"</span>: {
-    <span class="c-key">"id"</span>: <span class="c-num">1</span>,
-    <span class="c-key">"load"</span>: <span class="c-num">22</span>
-  }
-}` },
-    failqueen: { label: 'POST /fail_queen → 200 OK', body: `<span class="c-comment">// Triggers re-election</span>
+function lerp(a,b,t){return a+(b-a)*t;}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
 
-<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"old_queen"</span>: <span class="c-num">3</span>,
-  <span class="c-key">"new_queen"</span>: <span class="c-num">1</span>,
-  <span class="c-key">"reason"</span>: <span class="c-str">"queen_failed"</span>,
-  <span class="c-key">"timestamp"</span>: <span class="c-str">"2026-03-10T09:23:07"</span>
-}` },
-    logs: { label: 'GET /logs/packets → 200 OK', body: `<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"packets"</span>: [
-    {
-      <span class="c-key">"source"</span>: <span class="c-num">1</span>,
-      <span class="c-key">"destination"</span>: <span class="c-num">6</span>,
-      <span class="c-key">"path"</span>: <span class="c-str">"[1,2,4,6]"</span>,
-      <span class="c-key">"status"</span>: <span class="c-str">"delivered"</span>,
-      <span class="c-key">"timestamp"</span>: <span class="c-str">"2026-03-10T09:23:07"</span>
+/* ─── DRAW EDGES ─── */
+function drawEdges(){
+  const hlSet=new Set();
+  if(pathHL){for(let i=0;i<pathHL.length-1;i++){hlSet.add(`${pathHL[i]}-${pathHL[i+1]}`);hlSet.add(`${pathHL[i+1]}-${pathHL[i]}`);}}
+  const now=Date.now()/1000;
+
+  EDGES.forEach(e=>{
+    const na=ND[e.a],nb=ND[e.b];
+    const isHL=hlSet.has(`${e.a}-${e.b}`)||hlSet.has(`${e.b}-${e.a}`);
+    const dead=na.failed||nb.failed;
+    const ax=nx(na),ay=ny(na),bx=nx(nb),by=ny(nb);
+
+    ctx.save();
+    if(dead){
+      ctx.strokeStyle='rgba(224,84,84,.12)';ctx.lineWidth=.8;ctx.setLineDash([3,8]);
+    } else if(isHL){
+      // Glowing solid line for active path
+      ctx.shadowColor='rgba(245,166,35,.8)';ctx.shadowBlur=10;
+      ctx.strokeStyle='rgba(245,166,35,.85)';ctx.lineWidth=2.5;ctx.setLineDash([]);
+    } else if(e.score>=8){
+      ctx.strokeStyle='rgba(245,166,35,.3)';ctx.lineWidth=1.2;ctx.setLineDash([]);
+    } else {
+      ctx.strokeStyle='rgba(255,248,236,.1)';ctx.lineWidth=.9;ctx.setLineDash([5,9]);
     }
-  ]
-}` },
-    topology: { label: 'GET /topology → 200 OK', body: `<span class="c-comment">// Response</span>
-{
-  <span class="c-key">"nodes"</span>: [<span class="c-num">1</span>,<span class="c-num">2</span>,<span class="c-num">3</span>,<span class="c-num">4</span>,<span class="c-num">5</span>,<span class="c-num">6</span>],
-  <span class="c-key">"edges"</span>: [
-    [<span class="c-num">1</span>,<span class="c-num">2</span>],[<span class="c-num">1</span>,<span class="c-num">3</span>],
-    [<span class="c-num">2</span>,<span class="c-num">3</span>],[<span class="c-num">2</span>,<span class="c-num">4</span>],
-    [<span class="c-num">3</span>,<span class="c-num">5</span>],[<span class="c-num">4</span>,<span class="c-num">6</span>],
-    [<span class="c-num">5</span>,<span class="c-num">6</span>]
-  ]
-}` }
-  };
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+    ctx.shadowBlur=0;
 
-  function showCode(key) {
-    document.querySelectorAll('.endpoint').forEach(e => e.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-    document.getElementById('code-lang').textContent = codeData[key].label;
-    document.getElementById('code-body').innerHTML = codeData[key].body;
+    // Animated dots on ALL active edges
+    if(!dead&&!isHL&&e.score>=7){
+      ctx.setLineDash([]);
+      const phase=((now*(0.1+e.score*0.015))%1);
+      const px=lerp(ax,bx,phase),py=lerp(ay,by,phase);
+      ctx.beginPath();ctx.arc(px,py,1.8,0,Math.PI*2);
+      ctx.fillStyle=`rgba(245,166,35,0.2)`;ctx.fill();
+    }
+
+    // DOTTED TRAIL for highlighted path — animated marching ants
+    if(isHL&&!dead){
+      ctx.save();
+      ctx.strokeStyle='rgba(255,220,80,.65)';
+      ctx.lineWidth=2;
+      const offset=(now*60)%16;
+      ctx.setLineDash([6,10]);
+      ctx.lineDashOffset=-offset;
+      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+
+      // Arrowhead midpoint
+      const ang=Math.atan2(by-ay,bx-ax);
+      const mx2=(ax+bx)/2,my2=(ay+by)/2;
+      ctx.setLineDash([]);ctx.lineWidth=1.8;
+      ctx.strokeStyle='rgba(245,166,35,.9)';
+      ctx.beginPath();
+      ctx.moveTo(mx2+10*Math.cos(ang),my2+10*Math.sin(ang));
+      ctx.lineTo(mx2+10*Math.cos(ang)+7*Math.cos(ang+2.5),my2+10*Math.sin(ang)+7*Math.sin(ang+2.5));
+      ctx.moveTo(mx2+10*Math.cos(ang),my2+10*Math.sin(ang));
+      ctx.lineTo(mx2+10*Math.cos(ang)+7*Math.cos(ang-2.5),my2+10*Math.sin(ang)+7*Math.sin(ang-2.5));
+      ctx.stroke();
+
+      // Score badge
+      ctx.fillStyle='rgba(13,8,0,.85)';
+      ctx.beginPath();ctx.rect(mx2-18,my2-18,36,16);ctx.fill();
+      ctx.fillStyle='rgba(245,166,35,.9)';ctx.font='600 9px DM Mono,monospace';
+      ctx.textAlign='center';ctx.fillText('s:'+e.score,mx2,my2-7);
+      ctx.restore();
+    }
+    ctx.restore();
+  });
+}
+
+/* ─── DRAW NODE ─── */
+const NR=26;
+function hexPt(cx,cy,r,a){return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+function drawNode(n){
+  const x=nx(n),y=ny(n),{id,label,load,queen,failed}=n;
+  const now=Date.now()/1000;
+  ctx.save();
+
+  // Queen outer pulse rings
+  if(queen&&!failed){
+    for(let r=0;r<3;r++){
+      const ring=NR+18+r*12+5*Math.sin(now*1.2+r);
+      const alpha=(0.18-r*0.05)*(0.7+0.3*Math.sin(now*0.8+r));
+      ctx.beginPath();ctx.arc(x,y,ring,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(245,166,35,${alpha})`;ctx.lineWidth=1;ctx.setLineDash(r===1?[4,4]:[]);ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    // Ambient glow
+    const grd=ctx.createRadialGradient(x,y,0,x,y,NR+40);
+    grd.addColorStop(0,'rgba(245,166,35,.12)');grd.addColorStop(1,'rgba(245,166,35,0)');
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y,NR+40,0,Math.PI*2);ctx.fill();
   }
 
-  function selectNode(id) {
-    addLog(`Inspected Node ${id} — Load: ${Math.floor(Math.random()*80+10)}%`, 'info');
+  // Fail shockwave
+  if(failAnim&&failAnim.nodeId===id){
+    const ft=failAnim.t;
+    [0,.4,.8].forEach(off=>{
+      const t2=Math.min(1,(ft+off)%1);
+      ctx.beginPath();ctx.arc(x,y,NR*(1+t2*2.5),0,Math.PI*2);
+      ctx.strokeStyle=`rgba(224,84,84,${(1-t2)*.5})`;ctx.lineWidth=2;ctx.setLineDash([]);ctx.stroke();
+    });
   }
 
-  // Auto simulate packets
-  setInterval(simulatePacket, 4000);
+  // Node hexagon body
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a=Math.PI/180*(60*i-30);
+    const[px2,py2]=[x+NR*Math.cos(a),y+NR*Math.sin(a)];
+    i===0?ctx.moveTo(px2,py2):ctx.lineTo(px2,py2);
+  }
+  ctx.closePath();
+
+  if(failed){
+    ctx.fillStyle='rgba(224,84,84,.14)';ctx.strokeStyle='rgba(224,84,84,.55)';ctx.lineWidth=1.5;
+  } else if(queen){
+    const qg=ctx.createRadialGradient(x,y-6,2,x,y,NR);
+    qg.addColorStop(0,'rgba(255,215,100,.35)');qg.addColorStop(1,'rgba(245,166,35,.18)');
+    ctx.fillStyle=qg;ctx.strokeStyle='rgba(245,166,35,.95)';ctx.lineWidth=2.5;
+    ctx.shadowColor='rgba(245,166,35,.6)';ctx.shadowBlur=18;
+  } else {
+    ctx.fillStyle='rgba(13,8,0,.92)';ctx.strokeStyle='rgba(91,173,240,.6)';ctx.lineWidth=1.5;
+  }
+  ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+
+  // Load arc ring
+  if(!failed){
+    const startA=-Math.PI/2,endA=startA+2*Math.PI*(load/100);
+    ctx.beginPath();ctx.arc(x,y,NR-4,startA,endA);
+    ctx.strokeStyle=queen?'rgba(245,166,35,.45)':'rgba(91,173,240,.3)';
+    ctx.lineWidth=2.5;ctx.setLineDash([]);ctx.stroke();
+  }
+
+  // ID
+  ctx.fillStyle=failed?'rgba(224,84,84,.7)':queen?'rgba(245,166,35,1)':'rgba(255,248,236,.88)';
+  ctx.font=`700 11px Syne,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('0'+id,x,y-3);
+  // Label
+  ctx.fillStyle=failed?'rgba(224,84,84,.45)':queen?'rgba(255,210,127,.75)':'rgba(255,248,236,.35)';
+  ctx.font=`500 8px Syne,sans-serif`;ctx.fillText(label,x,y+8);
+
+  // Crown
+  if(queen&&!failed){ctx.font='13px serif';ctx.fillStyle='rgba(245,166,35,.95)';ctx.fillText('♛',x,y-NR-8);}
+
+  // Failed X
+  if(failed){
+    ctx.strokeStyle='rgba(224,84,84,.8)';ctx.lineWidth=2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x-8,y-8);ctx.lineTo(x+8,y+8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x+8,y-8);ctx.lineTo(x-8,y+8);ctx.stroke();
+    ctx.fillStyle='rgba(224,84,84,.5)';ctx.font='700 8px Syne';ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('FAILED',x,y+NR+4);ctx.textBaseline='middle';
+  }
+  // Port
+  if(!failed){
+    ctx.fillStyle='rgba(255,248,236,.15)';ctx.font='500 7px DM Mono,monospace';
+    ctx.textBaseline='top';ctx.fillText(':510'+id,x,y+NR+4);ctx.textBaseline='middle';
+  }
+  ctx.restore();
+}
+
+/* ─── DRAW PACKETS ─── */
+function drawPackets(){
+  packets.forEach(p=>{
+    if(p.path.length<2)return;
+    const total=p.path.length-1;
+    const seg=Math.min(Math.floor(p.t*total),total-1);
+    const segT=(p.t*total)-seg;
+    const na=ND[p.path[seg]],nb=ND[p.path[seg+1]];
+    const px=lerp(nx(na),nx(nb),ease(segT));
+    const py=lerp(ny(na),ny(nb),ease(segT));
+
+    ctx.save();
+    // Long glowing trail
+    const trailLen=10;
+    for(let tr=1;tr<=trailLen;tr++){
+      const tt=Math.max(0,p.t-tr*0.018);
+      const ts=Math.min(Math.floor(tt*total),total-1);
+      const tsT=(tt*total)-ts;
+      if(ts>=0&&ts<total){
+        const ta=ND[p.path[ts]],tb=ND[p.path[ts+1]];
+        const tx=lerp(nx(ta),nx(tb),ease(Math.max(0,tsT)));
+        const ty=lerp(ny(ta),ny(tb),ease(Math.max(0,tsT)));
+        const a=(1-tr/trailLen)*0.55;
+        const r=6-tr*0.45;
+        if(r>0){ctx.beginPath();ctx.arc(tx,ty,r,0,Math.PI*2);ctx.fillStyle=`rgba(255,210,120,${a})`;ctx.fill();}
+      }
+    }
+    // Core packet
+    ctx.shadowColor='rgba(255,200,80,.9)';ctx.shadowBlur=20;
+    ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,220,100,1)';ctx.fill();ctx.shadowBlur=0;
+    ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();
+    // Packet ID label
+    ctx.fillStyle='rgba(13,8,0,.8)';ctx.font='700 7px DM Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('PKT',px,py);
+    ctx.restore();
+  });
+}
+
+/* ─── DRAW QUEEN SPRITE ─── */
+function drawQueenSprite(x,y,angle,t){
+  ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/2);
+
+  // Wing flutter
+  const flutter=Math.sin(t*20)*0.3;
+  // Left wing
+  ctx.save();ctx.rotate(-0.4+flutter);
+  ctx.fillStyle='rgba(199,146,234,.55)';ctx.beginPath();ctx.ellipse(-10,-6,10,6,-.4,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+  // Right wing
+  ctx.save();ctx.rotate(0.4-flutter);
+  ctx.fillStyle='rgba(199,146,234,.55)';ctx.beginPath();ctx.ellipse(10,-6,10,6,.4,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+
+  // Body
+  ctx.fillStyle='rgba(245,166,35,.95)';ctx.beginPath();ctx.ellipse(0,2,8,11,0,0,Math.PI*2);ctx.fill();
+  // Head
+  ctx.fillStyle='rgba(245,166,35,1)';ctx.beginPath();ctx.arc(0,-10,6,0,Math.PI*2);ctx.fill();
+  // Stripes
+  ctx.fillStyle='rgba(13,8,0,.65)';
+  [-2,2,6].forEach(oy=>{ctx.beginPath();ctx.ellipse(0,oy,8,2,0,0,Math.PI*2);ctx.fill();});
+  // Eyes
+  ctx.fillStyle='#000';ctx.beginPath();ctx.arc(-2.5,-11,1.5,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(2.5,-11,1.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-2,-11.5,0.6,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(3,-11.5,0.6,0,Math.PI*2);ctx.fill();
+  // Crown
+  ctx.fillStyle='rgba(255,220,0,1)';ctx.font='bold 11px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('♛',0,-22);
+
+  ctx.restore();
+}
+
+function drawQueenAnim(){
+  if(!queenAnim || !queenAnim.path || queenAnim.path.length < 2) return;
+  const{path,t}=queenAnim;
+  const total=path.length-1;
+  const seg=Math.min(Math.floor(t*total),total-1);
+  const segT=(t*total)-seg;
+  const na=ND[path[seg]],nb=ND[path[seg+1]];
+  const px=lerp(nx(na),nx(nb),ease(segT));
+  const py=lerp(ny(na),ny(nb),ease(segT));
+  const angle=Math.atan2(ny(nb)-ny(na),nx(nb)-nx(na));
+
+  // Purple trail
+  ctx.save();
+  for(let tr=1;tr<=12;tr++){
+    const tt=Math.max(0,t-tr*0.015);
+    const ts=Math.min(Math.floor(tt*total),total-1);
+    const tsT=(tt*total)-ts;
+    if(ts>=0&&ts<total){
+      const ta=ND[path[ts]],tb=ND[path[ts+1]];
+      const tx=lerp(nx(ta),nx(tb),ease(Math.max(0,tsT)));
+      const ty=lerp(ny(ta),ny(tb),ease(Math.max(0,tsT)));
+      const r=Math.max(0,5.5-tr*0.4);
+      ctx.beginPath();ctx.arc(tx,ty,r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(199,146,234,${(1-tr/12)*0.5})`;ctx.fill();
+    }
+  }
+  // Purple glow
+  ctx.shadowColor='rgba(199,146,234,.6)';ctx.shadowBlur=18;
+  drawQueenSprite(px,py,angle,t*queenAnim.path.length);
+  ctx.shadowBlur=0;
+  ctx.restore();
+}
+
+/* ─── ELECT ANIMATION ─── */
+function drawElectAnim(){
+  if(!electAnim)return;
+  const{to,t}=electAnim;
+  const n=ND[to];
+  const x=nx(n),y=ny(n);
+  // Crown dropping from above
+  const dy=lerp(-80,0,ease(t));
+  ctx.save();
+  ctx.globalAlpha=Math.min(1,t*3);
+  ctx.shadowColor='rgba(199,146,234,.8)';ctx.shadowBlur=24;
+  ctx.font='20px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('👑',x,y+dy-NR-20);
+  // Sparkle rings
+  for(let r=0;r<3;r++){
+    const ring=(t-r*.1)*NR*3;
+    if(ring>0&&ring<NR*4){
+      ctx.beginPath();ctx.arc(x,y,ring,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(245,166,35,${(1-ring/(NR*4))*.4})`;ctx.lineWidth=1.5;ctx.setLineDash([]);ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+/* ─── BACKGROUND GRID ─── */
+function drawBg(){
+  ctx.save();ctx.strokeStyle='rgba(245,166,35,.03)';ctx.lineWidth=.5;
+  const gs=40;
+  for(let gx=0;gx<W;gx+=gs){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+  for(let gy=0;gy<H;gy+=gs){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+  ctx.restore();
+}
+
+/* ─── MAIN LOOP ─── */
+let last=0;
+function render(ts){
+  const dt=Math.min((ts-last)/1000,.1)*SPEED;last=ts;
+  ctx.clearRect(0,0,W,H);
+  drawBg();
+  drawEdges();
+  Object.values(ND).forEach(drawNode);
+  drawElectAnim();
+  drawPackets();
+  drawQueenAnim();
+
+  // Advance packets
+  const alive=[];
+  packets.forEach(p=>{
+    const len = Math.max(1, p.path.length - 1);
+p.t += dt / len * 0.55;
+    if(p.t>=1){onPktDone(p);}else{alive.push(p);}
+  });
+  packets.length=0;packets.push(...alive);
+
+  // Advance queen
+  if(queenAnim){queenAnim.t+=dt/queenAnim.path.length*0.32;if(queenAnim.t>=1){queenAnim=null;log('Queen returned to base','queen');}}
+
+  // Advance fail
+  if(failAnim){failAnim.t+=dt*1.4;if(failAnim.t>=1)failAnim=null;}
+
+  // Advance elect
+  if(electAnim){electAnim.t+=dt*0.6;if(electAnim.t>=1){applyElect();electAnim=null;}}
+
+  requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
+
+/* ─── PACKET CALLBACKS ─── */
+function onPktDone(p){
+  const dst=p.path[p.path.length-1];
+  log(`✓ Delivered → Node ${dst} via [${p.path.join('→')}]`,'success');
+  totalPkts++;
+  document.getElementById('sPkts').textContent=totalPkts.toLocaleString();
+  document.getElementById('iP').textContent=totalPkts;
+  pathHL=null;updatePathUI(null);updateInfo();
+  ND[dst].load=Math.max(5,ND[dst].load-2);
+}
+
+/* ─── USER CONTROLS ─── */
+function setBusy(v){busy=v;['btn-send','btn-queen','btn-fail'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=v;});}
+
+function userSendPacket(){
+  if(busy)return;
+  const act=Object.values(ND).filter(n=>!n.failed).map(n=>n.id);
+  if(act.length<2){log('Not enough active nodes','error');return;}
+  let s,d;do{s=act[Math.floor(Math.random()*act.length)];d=act[Math.floor(Math.random()*act.length)];}while(s===d);
+  doSend(s,d);
+}
+
+function doSend(src,dst){
+  const path=findRoute(src,dst);
+  if(!path){log(`No route ${src}→${dst}`,'error');return;}
+  setBusy(true);pathHL=path;updatePathUI(path);
+  log(`→ Packet ${src}→${dst} | Path:[${path.join('→')}]`,'info');
+  document.getElementById('iR').textContent=path.join('→');
+  packets.push({path,t:0});
+  setTimeout(()=>setBusy(false),(path.length-1)*900/SPEED+200);
+}
+
+function queenVisit(){
+  if(busy||queenAnim)return;
+  const qn=Object.values(ND).find(n=>n.queen&&!n.failed);
+  if(!qn){log('No active queen!','error');return;}
+  const act=Object.values(ND).filter(n=>!n.failed&&n.id!==qn.id).sort(()=>Math.random()-.5).slice(0,3);
+  const tour=[qn.id,...act.map(n=>n.id),qn.id];
+  const full=[tour[0]];
+  for(let i=0;i<tour.length-1;i++){const seg=findRoute(tour[i],tour[i+1]);if(seg)seg.slice(1).forEach(x=>full.push(x));}
+  log(`♛ Queen departing on inspection tour [${tour.join('→')}]`,'queen');
+  queenAnim={path:full,t:0};
+}
+
+function failRandomNode(){
+  if(busy)return;
+  const act=Object.values(ND).filter(n=>!n.failed);
+  if(act.length<=2){log('Cannot fail — minimum reached','error');return;}
+  const candidates=act.filter(n=>!n.queen);
+  const victim=candidates.length?candidates[Math.floor(Math.random()*candidates.length)]:act[Math.floor(Math.random()*act.length)];
+  const wasQueen=victim.queen;
+  victim.failed=true;if(victim.queen)victim.queen=false;
+  failAnim={nodeId:victim.id,t:0};
+  log(`💥 Node ${victim.id} (${victim.label}) FAILED!`,'error');
+  pathHL=null;updatePathUI(null);
+  if(wasQueen){
+    setTimeout(()=>{
+      log('⚡ Queen lost — triggering re-election…','queen');
+      const rem=Object.values(ND).filter(n=>!n.failed);
+      if(!rem.length)return;
+      const newQ=rem.reduce((a,b)=>a.load<b.load?a:b);
+      electAnim={from:victim.id,to:newQ.id,t:0};
+    },800);
+  }
+  updateInfo();
+  setTimeout(()=>{victim.failed=false;victim.load=Math.floor(20+Math.random()*30);log(`↺ Node ${victim.id} (${victim.label}) recovered`,'success');updateInfo();},6000);
+}
+
+function applyElect(){
+  const{to}=electAnim;
+  Object.values(ND).forEach(n=>n.queen=false);ND[to].queen=true;
+  log(`♛ New Queen: Node ${to} (${ND[to].label}) — load ${ND[to].load}%`,'queen');
+  updateInfo();
+}
+
+function resetAll(){
+  pathHL=null;packets.length=0;queenAnim=null;failAnim=null;electAnim=null;busy=false;
+  [34,61,18,47,72,29].forEach((l,i)=>{const n=ND[i+1];n.load=l;n.failed=false;n.queen=i===2;});
+  document.getElementById('sPkts').textContent='0';totalPkts=0;
+  updateInfo();updatePathUI(null);log('Network reset to initial state','info');
+  ['btn-send','btn-queen','btn-fail'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=false;});
+}
+
+/* ─── INFO PANEL ─── */
+function updateInfo(){
+  const qn=Object.values(ND).find(n=>n.queen&&!n.failed);
+  document.getElementById('iQ').textContent=qn?`Node 0${qn.id}`:'None';
+  document.getElementById('iQL').textContent=qn?`${qn.load}%`:'—';
+  const act=Object.values(ND).filter(n=>!n.failed).length;
+  document.getElementById('sNodes').textContent=act;
+  document.getElementById('iA').textContent=`${act} / 6`;document.getElementById('iF').textContent=6-act;
+  const s=act===6?'Nominal':act>=4?'Degraded':'Critical';
+  document.getElementById('iS').textContent=s;
+  document.getElementById('iS').className='info-val '+(act===6?'green':act>=4?'':'red');
+  const nm=document.getElementById('nlm');
+  nm.innerHTML=Object.values(ND).map(n=>`<div>
+    <div style="display:flex;justify-content:space-between;font-size:.68rem;margin-bottom:2px;">
+      <span style="color:rgba(255,248,236,${n.failed ? 0.25 : 0.55})">N${n.id} ${n.label}</span>
+      <span style="font-family:'DM Mono',monospace;color:${n.failed?'var(--danger)':n.queen?'var(--honey)':'rgba(255,248,236,.45)'};">${n.failed?'FAIL':n.load+'%'}</span>
+    </div>
+    <div style="height:3px;background:rgba(255,248,236,.06);border-radius:2px;overflow:hidden;">
+      <div style="height:100%;width:${n.failed?0:n.load}%;background:${n.failed?'var(--danger)':n.queen?'linear-gradient(90deg,var(--honey),var(--amber))':'linear-gradient(90deg,var(--info),rgba(91,173,240,.4))'};border-radius:2px;transition:width .5s;"></div>
+    </div></div>`).join('');
+}
+
+function updatePathUI(path){
+  const el=document.getElementById('pathNodes');
+  if(!path){el.innerHTML='<span class="path-empty">Awaiting next packet…</span>';return;}
+  el.innerHTML=path.map((id,i)=>`${i>0?'<span class="path-arrow">→</span>':''}<div class="path-node${ND[id].queen?' queen':''}">${String(id).padStart(2,'0')}</div>`).join('');
+}
+
+/* ─── LOG ─── */
+function log(msg,type='info'){
+  const lb=document.getElementById('logBody');
+  const n=new Date(),ts=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+  const d=document.createElement('div');d.className='log-entry';
+  const ic={success:'✓',error:'✗',info:'→',queen:'♛'}[type]||'·';
+  const cl={success:'ls',error:'le',info:'li',queen:'lq'}[type]||'li';
+  d.innerHTML=`<span class="log-time">${ts}</span><span class="${cl}">${ic}</span><span>${msg}</span>`;
+  lb.appendChild(d);lb.scrollTop=lb.scrollHeight;
+  if(lb.children.length>50)lb.removeChild(lb.firstChild);
+}
+
+/* ─── AUTO SIM ─── */
+updateInfo();
+log('System initialized — Swarm Intelligence Protocol active','info');
+log('Queen elected: Node 03 (Gamma) — lowest load 18%','queen');
+setTimeout(()=>queenVisit(),2000);
+setInterval(()=>{
+  if(!busy){
+    const act=Object.values(ND).filter(n=>!n.failed).map(n=>n.id);
+    if(act.length>=2){let s,d;do{s=act[Math.floor(Math.random()*act.length)];d=act[Math.floor(Math.random()*act.length)];}while(s===d);doSend(s,d);}
+  }
+},4000);
+setInterval(()=>{
+  Object.values(ND).forEach(n=>{if(!n.failed)n.load=Math.min(95,Math.max(5,n.load+Math.floor(Math.random()*7)-3));});
+  updateInfo();
+},2500);
+
+/* ─── API CODES ─── */
+const CM={
+  status:{l:'GET /status → 200 OK',b:`<span class="cc">// All node states</span>
+{ <span class="ck">"nodes"</span>: { <span class="ck">"1"</span>:{ <span class="ck">"load"</span>:<span class="cn">34</span>,<span class="ck">"is_queen"</span>:<span class="cn">false</span>,<span class="ck">"status"</span>:<span class="cs">"normal"</span>},
+               <span class="ck">"3"</span>:{ <span class="ck">"load"</span>:<span class="cn">18</span>,<span class="ck">"is_queen"</span>:<span class="cn">true</span>, <span class="ck">"status"</span>:<span class="cs">"normal"</span>} }}`},
+  queen:{l:'GET /queen → 200 OK',b:`{ <span class="ck">"queen"</span>:{ <span class="ck">"id"</span>:<span class="cn">3</span>,<span class="ck">"load"</span>:<span class="cn">18</span>,<span class="ck">"status"</span>:<span class="cs">"normal"</span>,<span class="ck">"elected_at"</span>:<span class="cs">"2026-03-10T09:23:07"</span>}}`},
+  send:{l:'POST /send_packet → 200 OK',b:`<span class="cc">// Request</span> { <span class="ck">"source"</span>:<span class="cn">1</span>, <span class="ck">"destination"</span>:<span class="cn">6</span> }
+<span class="cc">// Response</span>
+{ <span class="ck">"status"</span>:<span class="cs">"delivered"</span>, <span class="ck">"path"</span>:[<span class="cn">1</span>,<span class="cn">2</span>,<span class="cn">4</span>,<span class="cn">6</span>], <span class="ck">"hops"</span>:<span class="cn">3</span>, <span class="ck">"latency_ms"</span>:<span class="cn">2.4</span>}`},
+  fail:{l:'POST /fail_node/3 → 200 OK',b:`{ <span class="ck">"message"</span>:<span class="cs">"Node 3 marked failed"</span>, <span class="ck">"new_queen"</span>:{<span class="ck">"id"</span>:<span class="cn">1</span>,<span class="ck">"load"</span>:<span class="cn">22</span>}}`},
+  failqueen:{l:'POST /fail_queen → 200 OK',b:`{ <span class="ck">"old_queen"</span>:<span class="cn">3</span>, <span class="ck">"new_queen"</span>:<span class="cn">1</span>, <span class="ck">"reason"</span>:<span class="cs">"queen_failed"</span>, <span class="ck">"timestamp"</span>:<span class="cs">"2026-03-10"</span>}`},
+  logs:{l:'GET /logs/packets → 200 OK',b:`{ <span class="ck">"packets"</span>:[{ <span class="ck">"source"</span>:<span class="cn">1</span>,<span class="ck">"destination"</span>:<span class="cn">6</span>,<span class="ck">"path"</span>:<span class="cs">"[1,2,4,6]"</span>,<span class="ck">"status"</span>:<span class="cs">"delivered"</span>,<span class="ck">"timestamp"</span>:<span class="cs">"2026-03-10T09:23"</span>}]}`},
+  topology:{l:'GET /topology → 200 OK',b:`{ <span class="ck">"nodes"</span>:[<span class="cn">1</span>,<span class="cn">2</span>,<span class="cn">3</span>,<span class="cn">4</span>,<span class="cn">5</span>,<span class="cn">6</span>], <span class="ck">"edges"</span>:[[<span class="cn">1</span>,<span class="cn">2</span>],[<span class="cn">2</span>,<span class="cn">4</span>],[<span class="cn">4</span>,<span class="cn">6</span>],[<span class="cn">3</span>,<span class="cn">5</span>],[<span class="cn">5</span>,<span class="cn">6</span>],[<span class="cn">1</span>,<span class="cn">3</span>]]}`},
+};
+function showCode(key,el){
+  document.querySelectorAll('.endpoint').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('clabel').textContent=CM[key].l;
+  document.getElementById('cbody').innerHTML=CM[key].b;
+}
 </script>
 </body>
 </html>
