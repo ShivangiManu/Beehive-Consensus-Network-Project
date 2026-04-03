@@ -24,10 +24,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-links{display:flex;gap:2.5rem;list-style:none;}
 .nav-links a{color:rgba(255,248,236,.55);text-decoration:none;font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;}
 .nav-links a:hover{color:var(--honey);}
-.nav-badge{background:linear-gradient(135deg,var(--honey),var(--comb));color:var(--dark);font-size:.75rem;font-weight:700;padding:.45rem 1.2rem;border-radius:50px;letter-spacing:.04em;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
-.live-dot{width:6px;height:6px;background:var(--dark);border-radius:50%;animation:blink 1.5s infinite;}
+.api-status{display:flex;align-items:center;gap:8px;font-size:.75rem;font-weight:600;padding:.45rem 1.2rem;border-radius:50px;letter-spacing:.04em;border:.5px solid var(--border-s);}
+.api-status.connected{background:rgba(76,175,125,.12);color:var(--success);border-color:rgba(76,175,125,.3);}
+.api-status.disconnected{background:rgba(224,84,84,.12);color:var(--danger);border-color:rgba(224,84,84,.3);}
+.api-status.checking{background:rgba(245,166,35,.1);color:var(--honey);border-color:var(--border-s);}
+.live-dot{width:6px;height:6px;border-radius:50%;animation:blink 1.5s infinite;}
+.connected .live-dot{background:var(--success);}
+.disconnected .live-dot{background:var(--danger);animation:none;}
+.checking .live-dot{background:var(--honey);}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
-.nav-badge:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,.3);}
 section{position:relative;z-index:1;}
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;overflow:hidden;}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,.1);border:.5px solid var(--border-s);border-radius:50px;padding:.4rem 1.2rem;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--honey-light);margin-bottom:2rem;animation:fadeUp .8s ease both;}
@@ -56,8 +61,6 @@ section{position:relative;z-index:1;}
 .stat-item:hover{background:rgba(245,166,35,.04);}
 .stat-num{font-size:2.5rem;font-weight:800;color:var(--honey);letter-spacing:-.03em;}
 .stat-label{font-size:.72rem;color:rgba(255,248,236,.38);letter-spacing:.08em;text-transform:uppercase;margin-top:.4rem;font-weight:500;}
-
-/* ── NETWORK SECTION ── */
 .net-section{padding:6rem 0;background:rgba(245,166,35,.015);border-top:.5px solid var(--border);border-bottom:.5px solid var(--border);}
 .net-inner{max-width:1400px;margin:0 auto;padding:0 4rem;}
 .net-header{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-bottom:2.5rem;}
@@ -66,6 +69,42 @@ section{position:relative;z-index:1;}
 .section-title{font-size:clamp(2rem,3.5vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:1rem;}
 .section-title em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;color:var(--honey-light);}
 .section-desc{color:rgba(255,248,236,.48);font-size:.9rem;line-height:1.75;font-weight:400;}
+
+/* ── SCENARIO BUTTONS ── */
+.scenario-section{padding:1.5rem 0;background:rgba(0,0,0,.3);border:.5px solid var(--border);border-radius:16px;margin-bottom:2rem;}
+.scenario-title{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,248,236,.32);padding:.5rem 1.4rem .8rem;border-bottom:.5px solid var(--border);margin-bottom:1rem;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;padding:0 1.2rem 1.2rem;}
+.scene-btn{display:flex;flex-direction:column;gap:4px;padding:.9rem 1.1rem;border-radius:10px;cursor:pointer;transition:all .22s;border:none;text-align:left;font-family:'Syne',sans-serif;position:relative;overflow:hidden;}
+.scene-btn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s;}
+.scene-btn:hover::before{opacity:1;}
+.scene-btn:disabled{opacity:.4;cursor:not-allowed;}
+.scene-btn .s-icon{font-size:1.2rem;margin-bottom:2px;}
+.scene-btn .s-label{font-size:.72rem;font-weight:700;letter-spacing:.03em;}
+.scene-btn .s-desc{font-size:.62rem;font-weight:400;opacity:.6;line-height:1.4;}
+.sb-send{background:rgba(245,166,35,.1);color:var(--honey-light);border:.5px solid rgba(245,166,35,.25);}
+.sb-send::before{background:rgba(245,166,35,.08);}
+.sb-send:hover{border-color:rgba(245,166,35,.5);transform:translateY(-1px);}
+.sb-queen{background:rgba(199,146,234,.1);color:var(--purple);border:.5px solid rgba(199,146,234,.25);}
+.sb-queen::before{background:rgba(199,146,234,.08);}
+.sb-queen:hover{border-color:rgba(199,146,234,.5);transform:translateY(-1px);}
+.sb-fail{background:rgba(224,84,84,.1);color:#f08080;border:.5px solid rgba(224,84,84,.25);}
+.sb-fail::before{background:rgba(224,84,84,.08);}
+.sb-fail:hover{border-color:rgba(224,84,84,.5);transform:translateY(-1px);}
+.sb-election{background:rgba(91,173,240,.1);color:var(--info);border:.5px solid rgba(91,173,240,.25);}
+.sb-election::before{background:rgba(91,173,240,.08);}
+.sb-election:hover{border-color:rgba(91,173,240,.5);transform:translateY(-1px);}
+.sb-reset{background:rgba(76,175,125,.1);color:var(--success);border:.5px solid rgba(76,175,125,.25);}
+.sb-reset::before{background:rgba(76,175,125,.08);}
+.sb-reset:hover{border-color:rgba(76,175,125,.5);transform:translateY(-1px);}
+.sb-chaos{background:rgba(255,100,50,.1);color:#ff8c60;border:.5px solid rgba(255,100,50,.25);}
+.sb-chaos::before{background:rgba(255,100,50,.08);}
+.sb-chaos:hover{border-color:rgba(255,100,50,.5);transform:translateY(-1px);}
+
+/* Node selector */
+.node-picker{display:flex;align-items:center;gap:.5rem;padding:.5rem 1.2rem;border-top:.5px solid var(--border);margin-top:0;}
+.node-picker label{font-size:.65rem;color:rgba(255,248,236,.38);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;}
+.node-picker select{background:rgba(0,0,0,.4);border:.5px solid var(--border-s);color:var(--cream);font-family:'DM Mono',monospace;font-size:.72rem;padding:.25rem .5rem;border-radius:6px;outline:none;cursor:pointer;}
+
 .net-controls{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-top:1.5rem;}
 .ctrl-btn{display:inline-flex;align-items:center;gap:7px;padding:.6rem 1.3rem;border-radius:50px;font-family:'Syne',sans-serif;font-size:.76rem;font-weight:600;cursor:pointer;transition:all .22s;border:none;letter-spacing:.02em;}
 .ctrl-btn.primary{background:linear-gradient(135deg,var(--honey),var(--comb));color:var(--dark);}
@@ -102,7 +141,7 @@ section{position:relative;z-index:1;}
 .log-title{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,248,236,.3);}
 .log-clear{font-size:.62rem;color:rgba(255,248,236,.22);cursor:pointer;background:none;border:none;font-family:'Syne',sans-serif;letter-spacing:.04em;transition:color .2s;}
 .log-clear:hover{color:var(--honey);}
-.log-body{height:150px;overflow-y:auto;padding:.75rem 1.1rem;display:flex;flex-direction:column;gap:1px;}
+.log-body{height:200px;overflow-y:auto;padding:.75rem 1.1rem;display:flex;flex-direction:column;gap:1px;}
 .log-body::-webkit-scrollbar{width:3px;}
 .log-body::-webkit-scrollbar-thumb{background:rgba(245,166,35,.2);border-radius:3px;}
 .log-entry{display:flex;align-items:flex-start;gap:7px;font-family:'DM Mono',monospace;font-size:.66rem;line-height:1.65;color:rgba(255,248,236,.38);animation:logIn .3s ease;}
@@ -110,7 +149,17 @@ section{position:relative;z-index:1;}
 .log-time{color:rgba(255,248,236,.18);flex-shrink:0;}
 .ls{color:var(--success);}.le{color:var(--danger);}.li{color:var(--honey-light);}.lq{color:var(--purple);}
 
-/* ── ARCH ── */
+/* API Response Panel */
+.api-response-panel{background:rgba(0,0,0,.6);border:.5px solid var(--border);border-radius:14px;overflow:hidden;margin-top:1rem;}
+.api-resp-header{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border-bottom:.5px solid var(--border);background:rgba(0,0,0,.3);}
+.api-resp-title{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,248,236,.28);}
+.api-resp-status{font-family:'DM Mono',monospace;font-size:.62rem;padding:.15rem .5rem;border-radius:4px;}
+.api-resp-status.ok{background:rgba(76,175,125,.15);color:var(--success);}
+.api-resp-status.err{background:rgba(224,84,84,.15);color:var(--danger);}
+.api-resp-status.pending{background:rgba(245,166,35,.15);color:var(--honey);}
+.api-resp-body{padding:.8rem 1rem;font-family:'DM Mono',monospace;font-size:.66rem;line-height:1.8;color:rgba(255,248,236,.5);max-height:120px;overflow-y:auto;white-space:pre-wrap;}
+
+/* FAQ + arch sections */
 .arch-section{padding:8rem 4rem;max-width:1200px;margin:0 auto;}
 .nodes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:.5px solid var(--border);border-radius:16px;overflow:hidden;margin-top:4rem;}
 .node-card{background:rgba(13,8,0,.92);padding:2rem;position:relative;overflow:hidden;transition:background .3s;}
@@ -127,8 +176,6 @@ section{position:relative;z-index:1;}
 .load-bar{height:3px;background:rgba(255,248,236,.07);border-radius:2px;overflow:hidden;margin-top:.75rem;}
 .load-fill{height:100%;background:linear-gradient(90deg,var(--honey),var(--amber));border-radius:2px;}
 .nbg{position:absolute;bottom:-14px;right:-6px;font-size:4.5rem;opacity:.04;pointer-events:none;font-weight:800;line-height:1;}
-
-/* ── FEATURES ── */
 .features-section{padding:8rem 4rem;max-width:1200px;margin:0 auto;}
 .features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:4rem;}
 .feature-card{background:rgba(255,248,236,.018);border:.5px solid var(--border);border-radius:16px;padding:2.2rem;transition:all .3s;}
@@ -138,8 +185,6 @@ section{position:relative;z-index:1;}
 .f-title{font-size:1rem;font-weight:700;margin-bottom:.6rem;}
 .f-desc{font-size:.82rem;color:rgba(255,248,236,.42);line-height:1.7;font-weight:400;}
 .f-tag{display:inline-block;background:rgba(245,166,35,.1);border:.5px solid rgba(245,166,35,.2);color:var(--honey-light);font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.22rem .7rem;border-radius:50px;margin-top:.9rem;}
-
-/* ── API ── */
 .api-section{padding:8rem 4rem;background:rgba(245,166,35,.01);border-top:.5px solid var(--border);}
 .api-inner{max-width:1200px;margin:0 auto;}
 .api-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:4rem;align-items:start;margin-top:4rem;}
@@ -159,8 +204,6 @@ section{position:relative;z-index:1;}
 .code-lang{font-family:'DM Mono',monospace;font-size:.65rem;color:rgba(255,248,236,.28);}
 .code-body{padding:1.4rem;font-family:'DM Mono',monospace;font-size:.76rem;line-height:1.85;overflow-x:auto;}
 .ck{color:var(--info);}.cs{color:var(--honey-light);}.cn{color:var(--success);}.cc{color:rgba(255,248,236,.22);font-style:italic;}.cm{color:var(--purple);}
-
-/* ── FAQ ── */
 .faq-section{padding:8rem 4rem;max-width:900px;margin:0 auto;}
 .faq-grid{margin-top:4rem;display:flex;flex-direction:column;gap:1px;background:var(--border);border-radius:16px;overflow:hidden;}
 .faq-item{background:rgba(13,8,0,.9);padding:1.6rem 2rem;cursor:pointer;transition:background .2s;}
@@ -177,7 +220,7 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
 .reveal.visible{opacity:1;transform:none;}
 .d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
-@media(max-width:900px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}.net-inner,.arch-section,.features-section,.api-section,.faq-section{padding:5rem 1.5rem;}.net-header,.net-canvas-wrap,.bottom-row{grid-template-columns:1fr;}.nodes-grid,.features-grid,.api-grid{grid-template-columns:1fr;}.feature-card.wide{grid-column:1;display:block;}.stats-bar{grid-template-columns:repeat(2,1fr);}footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem;}}
+@media(max-width:900px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}.net-inner,.arch-section,.features-section,.api-section,.faq-section{padding:5rem 1.5rem;}.net-header,.net-canvas-wrap,.bottom-row{grid-template-columns:1fr;}.nodes-grid,.features-grid,.api-grid{grid-template-columns:1fr;}.feature-card.wide{grid-column:1;display:block;}.stats-bar{grid-template-columns:repeat(2,1fr);}.scenario-grid{grid-template-columns:repeat(2,1fr);}footer{flex-direction:column;gap:1rem;text-align:center;padding:2rem 1.5rem;}}
 </style>
 </head>
 <body>
@@ -195,7 +238,10 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
     <li><a href="#api">API</a></li>
     <li><a href="#faq">FAQ</a></li>
   </ul>
-  <div class="nav-badge"><span class="live-dot"></span>Queen Active</div>
+  <div class="api-status checking" id="apiStatusBadge">
+    <span class="live-dot"></span>
+    <span id="apiStatusText">Connecting…</span>
+  </div>
 </nav>
 
 <section class="hero">
@@ -215,8 +261,8 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
 <div class="stats-bar">
   <div class="stat-item"><div class="stat-num" id="sPkts">0</div><div class="stat-label">Packets Routed</div></div>
   <div class="stat-item"><div class="stat-num" id="sNodes">6</div><div class="stat-label">Active Nodes</div></div>
-  <div class="stat-item"><div class="stat-num">99.9%</div><div class="stat-label">Network Uptime</div></div>
-  <div class="stat-item"><div class="stat-num">~2ms</div><div class="stat-label">Avg Latency</div></div>
+  <div class="stat-item"><div class="stat-num" id="sUptime">99.9%</div><div class="stat-label">Network Uptime</div></div>
+  <div class="stat-item"><div class="stat-num" id="sLatency">~2ms</div><div class="stat-label">Avg Latency</div></div>
 </div>
 
 <section class="net-section" id="network">
@@ -225,11 +271,72 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
       <div>
         <div class="section-label">Live Network Simulation</div>
         <h2 class="section-title">The hive <em>in motion</em></h2>
-        <p class="section-desc">Watch data packets travel the mesh in real time. The Queen bee sprite visits each node. Dotted lines trace every active route. Fail nodes, trigger re-elections — fully interactive.</p>
+        <p class="section-desc">Watch data packets travel the mesh in real time. The Queen bee sprite visits each node. Fire erupts on failed nodes. Scenario buttons trigger real API calls to your Python backend.</p>
+
+        <!-- SCENARIO BUTTONS -->
+        <div class="scenario-section">
+          <div class="scenario-title">🎬 Scenario Control Panel — Real API Calls</div>
+          <div class="scenario-grid">
+            <button class="scene-btn sb-send" onclick="sceneSendPacket()">
+              <span class="s-icon">🐝</span>
+              <span class="s-label">Send Packet</span>
+              <span class="s-desc">POST /send_packet → route data across mesh</span>
+            </button>
+            <button class="scene-btn sb-queen" onclick="sceneQueenTour()">
+              <span class="s-icon">👑</span>
+              <span class="s-label">Queen Inspection Tour</span>
+              <span class="s-desc">GET /queen → watch her visit all nodes</span>
+            </button>
+            <button class="scene-btn sb-fail" id="btnFailNode" onclick="sceneFailNode()">
+              <span class="s-icon">🔥</span>
+              <span class="s-label">Kill a Node</span>
+              <span class="s-desc">POST /fail_node/:id → fire animation + crash</span>
+            </button>
+            <button class="scene-btn sb-election" onclick="sceneFailQueen()">
+              <span class="s-icon">⚡</span>
+              <span class="s-label">Assassinate Queen</span>
+              <span class="s-desc">POST /fail_queen → emergency re-election</span>
+            </button>
+            <button class="scene-btn sb-chaos" onclick="sceneChaos()">
+              <span class="s-icon">💀</span>
+              <span class="s-label">Chaos Mode</span>
+              <span class="s-desc">Fail 2 nodes, reroute, watch self-healing</span>
+            </button>
+            <button class="scene-btn sb-reset" onclick="sceneReset()">
+              <span class="s-icon">↺</span>
+              <span class="s-label">Full Reset</span>
+              <span class="s-desc">Restore all nodes + re-elect queen</span>
+            </button>
+          </div>
+          <div class="node-picker">
+            <label>Target Node for Kill:</label>
+            <select id="failNodeSel">
+              <option value="1">Node 01 — Alpha</option>
+              <option value="2">Node 02 — Beta</option>
+              <option value="3">Node 03 — Gamma</option>
+              <option value="4">Node 04 — Delta</option>
+              <option value="5" selected>Node 05 — Epsilon</option>
+              <option value="6">Node 06 — Zeta</option>
+            </select>
+            <label style="margin-left:1rem;">Src→Dst:</label>
+            <select id="srcSel">
+              <option value="1">01</option><option value="2">02</option><option value="3">03</option>
+              <option value="4">04</option><option value="5">05</option><option value="6">06</option>
+            </select>
+            <span style="color:rgba(255,248,236,.3);font-size:.7rem;">→</span>
+            <select id="dstSel">
+              <option value="1">01</option><option value="2">02</option><option value="3">03</option>
+              <option value="4">04</option><option value="5">05</option><option value="6" selected>06</option>
+            </select>
+            <label style="margin-left:1rem;">Backend:</label>
+            <input id="apiBase" value="http://127.0.0.1:5000" style="background:rgba(0,0,0,.4);border:.5px solid var(--border-s);color:var(--cream);font-family:'DM Mono',monospace;font-size:.65rem;padding:.25rem .5rem;border-radius:6px;outline:none;width:180px;">
+          </div>
+        </div>
+
         <div class="net-controls">
-          <button class="ctrl-btn primary" id="btn-send" onclick="userSendPacket()">🐝 Send Packet</button>
+          <button class="ctrl-btn primary" id="btn-send" onclick="userSendPacket()">🐝 Auto Packet</button>
           <button class="ctrl-btn secondary" id="btn-queen" onclick="queenVisit()">👑 Queen Tour</button>
-          <button class="ctrl-btn danger" id="btn-fail" onclick="failRandomNode()">💥 Fail Node</button>
+          <button class="ctrl-btn danger" id="btn-fail" onclick="failRandomNode()">💥 Fail Random</button>
           <button class="ctrl-btn secondary" onclick="resetAll()">↺ Reset</button>
           <div class="speed-wrap">Speed: <select id="speedSel" onchange="SPEED=parseFloat(this.value)"><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5" selected>1.5×</option><option value="2">2×</option></select></div>
         </div>
@@ -244,10 +351,19 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
           <div class="info-row"><span class="info-key">Packets Sent</span><span class="info-val" id="iP">0</span></div>
           <div class="info-row"><span class="info-key">Last Path</span><span class="info-val" id="iR">—</span></div>
           <div class="info-row"><span class="info-key">Status</span><span class="info-val green" id="iS">Nominal</span></div>
+          <div class="info-row"><span class="info-key">API Mode</span><span class="info-val" id="iMode" style="color:var(--honey)">Simulation</span></div>
         </div>
         <div class="panel">
           <div class="panel-title">Node Load Meters</div>
           <div id="nlm" style="display:flex;flex-direction:column;gap:.55rem;"></div>
+        </div>
+        <!-- API Response Panel -->
+        <div class="api-response-panel">
+          <div class="api-resp-header">
+            <div class="api-resp-title">Last API Response</div>
+            <div class="api-resp-status pending" id="apiRespStatus">—</div>
+          </div>
+          <div class="api-resp-body" id="apiRespBody">// Awaiting first API call…</div>
         </div>
       </div>
     </div>
@@ -266,10 +382,10 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
             <div class="panel-title">Legend</div>
             <div class="legend-item"><div class="lg-dot" style="background:#F5A623;box-shadow:0 0 8px #F5A623;"></div>Queen node (elected leader)</div>
             <div class="legend-item"><div class="lg-dot" style="background:rgba(91,173,240,.9);"></div>Normal active node</div>
-            <div class="legend-item"><div class="lg-dot" style="background:rgba(224,84,84,.9);"></div>Failed / offline node</div>
+            <div class="legend-item"><div class="lg-dot" style="background:rgba(224,84,84,.9);"></div>Failed node — fire animation</div>
             <div class="legend-item"><div class="lg-line" style="background:rgba(245,166,35,.8);height:3px;"></div>Active route with dotted trail</div>
             <div class="legend-item"><div class="lg-dash"></div>Low-score fallback path</div>
-            <div class="legend-item"><div class="lg-dot" style="background:#FFD27F;width:8px;height:8px;"></div>Data packet sprite</div>
+            <div class="legend-item"><div class="lg-dot" style="background:#FFD27F;width:8px;height:8px;"></div>Data packet sprite (bee)</div>
             <div class="legend-item"><div class="lg-dot" style="background:#C792EA;width:8px;height:8px;"></div>Queen bee sprite</div>
           </div>
         </div>
@@ -285,17 +401,13 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
 </section>
 
 <section class="arch-section" id="architecture">
-  <div class="reveal">
-    <div class="section-label">System Design</div>
-    <h2 class="section-title">Six nodes.<br><em>One hive mind.</em></h2>
-    <p class="section-desc">Each BeeNode runs independently in its own thread, learns from routing outcomes, and self-heals when neighbors fail.</p>
-  </div>
+  <div class="reveal"><div class="section-label">Architecture</div><h2 class="section-title">Six nodes, <em>infinite resilience</em></h2></div>
   <div class="nodes-grid reveal d1">
-    <div class="node-card"><div class="node-id">NODE_01 · PORT 5101</div><div class="node-name">Alpha Node</div><div class="node-desc">Primary entry point. Handles inbound packet distribution and maintains neighbor score tables.</div><div class="load-bar"><div class="load-fill" style="width:34%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 34%</div><div class="nbg">01</div></div>
-    <div class="node-card"><div class="node-id">NODE_02 · PORT 5102</div><div class="node-name">Beta Node</div><div class="node-desc">Mid-layer relay. Bridges Alpha cluster with Gamma via score-weighted routing decisions.</div><div class="load-bar"><div class="load-fill" style="width:61%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 61%</div><div class="nbg">02</div></div>
-    <div class="node-card"><div class="node-id">NODE_03 · PORT 5103</div><div class="node-name">Gamma — Queen 👑</div><div class="node-desc">Currently elected Queen. Lowest load node — coordinates priority traffic and re-election on failure.</div><div class="load-bar"><div class="load-fill" style="width:18%"></div></div><div class="node-status sq"><span class="sd"></span>Queen — Load 18%</div><div class="nbg">03</div></div>
-    <div class="node-card"><div class="node-id">NODE_04 · PORT 5104</div><div class="node-name">Delta Node</div><div class="node-desc">Redundant path handler. Activates alternate routes when primary paths show elevated latency.</div><div class="load-bar"><div class="load-fill" style="width:47%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 47%</div><div class="nbg">04</div></div>
-    <div class="node-card"><div class="node-id">NODE_05 · PORT 5105</div><div class="node-name">Epsilon Node</div><div class="node-desc">Deep mesh node. Connects remote clusters and maintains long-path score memory for efficiency.</div><div class="load-bar"><div class="load-fill" style="width:72%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 72%</div><div class="nbg">05</div></div>
+    <div class="node-card"><div class="node-id">NODE_01 · PORT 5101</div><div class="node-name">Alpha Node</div><div class="node-desc">Primary ingress node. Connects to Beta and Gamma. Handles initial packet classification and route scoring initialization.</div><div class="load-bar"><div class="load-fill" style="width:34%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 34%</div><div class="nbg">01</div></div>
+    <div class="node-card"><div class="node-id">NODE_02 · PORT 5102</div><div class="node-name">Beta Node</div><div class="node-desc">High-traffic relay. Connected to Alpha, Gamma, Delta, and Epsilon. Acts as a central bridge in most shortest paths.</div><div class="load-bar"><div class="load-fill" style="width:61%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 61%</div><div class="nbg">02</div></div>
+    <div class="node-card"><div class="node-id">NODE_03 · PORT 5103</div><div class="node-name">Gamma Node</div><div class="node-desc">Current Queen. Lowest load in the cluster. Coordinates priority packets and broadcasts routing table updates to peers.</div><div class="load-bar"><div class="load-fill" style="width:18%"></div></div><div class="node-status sq"><span class="sd"></span>Queen — Load 18%</div><div class="nbg">03</div></div>
+    <div class="node-card"><div class="node-id">NODE_04 · PORT 5104</div><div class="node-name">Delta Node</div><div class="node-desc">Northern relay hub. Strong link to Zeta (score 9). Preferred path for packets destined to the final endpoint.</div><div class="load-bar"><div class="load-fill" style="width:47%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 47%</div><div class="nbg">04</div></div>
+    <div class="node-card"><div class="node-id">NODE_05 · PORT 5105</div><div class="node-name">Epsilon Node</div><div class="node-desc">Southern bypass node. Heavy load due to alternate routing. Provides redundancy when northern paths are congested.</div><div class="load-bar"><div class="load-fill" style="width:72%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 72%</div><div class="nbg">05</div></div>
     <div class="node-card"><div class="node-id">NODE_06 · PORT 5106</div><div class="node-name">Zeta Node</div><div class="node-desc">Destination endpoint. Logs all arriving packets to SQLite and issues delivery confirmations.</div><div class="load-bar"><div class="load-fill" style="width:29%"></div></div><div class="node-status sa"><span class="sd"></span>Active — Load 29%</div><div class="nbg">06</div></div>
   </div>
 </section>
@@ -371,7 +483,7 @@ document.querySelectorAll('a,button,.faq-item,.endpoint').forEach(el=>{
 
 /* ─── FLOATING NODES ─── */
 const fc=document.getElementById('fnodes');
-['#F5A623','#FFD27F','#E8891A','#FFC857','#FF9500'].forEach((c,ci)=>{
+['#F5A623','#FFD27F','#E8891A','#FFC857','#FF9500'].forEach((c)=>{
   for(let i=0;i<4;i++){const d=document.createElement('div');d.className='f-node';const s=4+Math.random()*10;d.style.cssText=`width:${s}px;height:${s}px;background:${c};left:${Math.random()*100}%;animation-duration:${9+Math.random()*12}s;animation-delay:${Math.random()*-14}s;opacity:.15;`;fc.appendChild(d);}
 });
 
@@ -382,6 +494,267 @@ document.getElementById('ticker').innerHTML=[...td,...td].map(t=>`<span class="t
 /* ─── REVEAL ─── */
 const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:.08});
 document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+/* ═══════════════════════════════════════
+   API LAYER — real calls to Flask backend
+══════════════════════════════════════ */
+function apiBase(){return document.getElementById('apiBase').value.replace(/\/$/,'');}
+let apiConnected=false;
+
+async function apiCall(method,path,body=null){
+  const url=apiBase()+path;
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  try{
+    const r=await fetch(url,opts);
+    const data=await r.json();
+    showApiResponse(r.status,data);
+    return{ok:true,status:r.status,data};
+  }catch(e){
+    showApiResponse(0,{error:e.message});
+    return{ok:false,error:e.message};
+  }
+}
+
+function showApiResponse(status,data){
+  const el=document.getElementById('apiRespStatus');
+  const body=document.getElementById('apiRespBody');
+  if(status===0){el.className='api-resp-status err';el.textContent='ERR';}
+  else if(status<300){el.className='api-resp-status ok';el.textContent=status+' OK';}
+  else{el.className='api-resp-status err';el.textContent=status+' ERR';}
+  body.textContent=JSON.stringify(data,null,2);
+}
+
+async function checkApiConnection(){
+  const badge=document.getElementById('apiStatusBadge');
+  const txt=document.getElementById('apiStatusText');
+  badge.className='api-status checking';txt.textContent='Connecting…';
+  try{
+    const r=await fetch(apiBase()+'/status',{signal:AbortSignal.timeout(2000)});
+    if(r.ok){
+      badge.className='api-status connected';txt.textContent='Backend Live';
+      apiConnected=true;
+      document.getElementById('iMode').textContent='Live API';
+      document.getElementById('iMode').style.color='var(--success)';
+      log('✓ Flask backend connected at '+apiBase(),'success');
+      // Sync real state
+      syncFromBackend();
+    }else throw new Error('bad status');
+  }catch{
+    badge.className='api-status disconnected';txt.textContent='Offline — Sim Mode';
+    apiConnected=false;
+    document.getElementById('iMode').textContent='Simulation';
+    document.getElementById('iMode').style.color='var(--honey)';
+    log('⚠ Backend offline — running in simulation mode','info');
+  }
+}
+
+async function syncFromBackend(){
+  if(!apiConnected)return;
+  const res=await apiCall('GET','/status');
+  if(!res.ok)return;
+  const nodes=res.data;
+  for(const [id,n] of Object.entries(nodes)){
+    const nid=parseInt(id);
+    if(ND[nid]){
+      ND[nid].load=Math.min(95,n.load*10||ND[nid].load);
+      ND[nid].failed=n.status==='failed';
+      ND[nid].queen=n.is_queen;
+    }
+  }
+  updateInfo();
+}
+
+/* ═══════════════════════════════════════
+   SCENARIO HANDLERS
+══════════════════════════════════════ */
+async function sceneSendPacket(){
+  const src=parseInt(document.getElementById('srcSel').value);
+  const dst=parseInt(document.getElementById('dstSel').value);
+  if(src===dst){log('Source and destination must differ','error');return;}
+  if(ND[src].failed){log(`Node ${src} is failed — choose another source`,'error');return;}
+  
+  log(`🐝 API → POST /send_packet {src:${src}, dst:${dst}}`,'info');
+  
+  if(apiConnected){
+    const res=await apiCall('POST','/send_packet',{source:src,destination:dst,data:'BeeNet packet'});
+    if(res.ok){
+      const d=res.data;
+      if(d.status==='delivered'){
+        // Parse path from backend response or simulate
+        const path=d.path||findRoute(src,dst);
+        if(path){doSend(src,dst,path);}
+        log(`✓ Backend: delivered via path — ${JSON.stringify(d)}`,'success');
+      }else{
+        log(`✗ Dropped: ${d.status||d.error}`,'error');
+      }
+    }
+  }else{
+    // Simulation fallback
+    doSend(src,dst);
+  }
+}
+
+async function sceneQueenTour(){
+  log('👑 API → GET /queen','info');
+  if(apiConnected){
+    const res=await apiCall('GET','/queen');
+    if(res.ok){
+      const qid=res.data.queen_id;
+      if(qid&&ND[qid]){
+        Object.values(ND).forEach(n=>n.queen=false);
+        ND[qid].queen=true;
+        updateInfo();
+        log(`♛ Backend queen is Node ${qid} — starting animation tour`,'queen');
+      }
+    }
+  }
+  queenVisit();
+}
+
+async function sceneFailNode(){
+  const nid=parseInt(document.getElementById('failNodeSel').value);
+  if(ND[nid].failed){log(`Node ${nid} is already failed`,'error');return;}
+  
+  log(`🔥 API → POST /fail_node/${nid}`,'info');
+  // Start fire animation immediately
+  triggerFireNode(nid);
+  
+  if(apiConnected){
+    const res=await apiCall('POST',`/fail_node/${nid}`);
+    if(res.ok){
+      ND[nid].failed=true;ND[nid].queen=false;
+      const newQ=res.data.new_queen;
+      if(newQ&&ND[newQ]){
+        Object.values(ND).forEach(n=>n.queen=false);ND[newQ].queen=true;
+        log(`♛ Backend: new queen is Node ${newQ}`,'queen');
+        electAnim={from:nid,to:newQ,t:0};
+      }
+      log(`✗ Node ${nid} (${ND[nid].label}) — backend confirmed crash`,'error');
+      updateInfo();
+      // Auto-recover after 8s
+      setTimeout(()=>{ND[nid].failed=false;ND[nid].load=Math.floor(20+Math.random()*30);log(`↺ Node ${nid} recovered`,'success');updateInfo();},8000);
+    }
+  }else{
+    // Simulation
+    const wasQ=ND[nid].queen;
+    ND[nid].failed=true;ND[nid].queen=false;
+    failAnim={nodeId:nid,t:0,fire:true};
+    log(`💥 [SIM] Node ${nid} (${ND[nid].label}) FAILED — fire!`,'error');
+    pathHL=null;updatePathUI(null);
+    if(wasQ){
+      setTimeout(()=>{
+        const rem=Object.values(ND).filter(n=>!n.failed);
+        if(!rem.length)return;
+        const newQ=rem.reduce((a,b)=>a.load<b.load?a:b);
+        electAnim={from:nid,to:newQ.id,t:0};
+        log(`⚡ [SIM] Emergency re-election → Node ${newQ.id}`,'queen');
+      },800);
+    }
+    updateInfo();
+    setTimeout(()=>{ND[nid].failed=false;ND[nid].load=Math.floor(20+Math.random()*30);log(`↺ Node ${nid} recovered`,'success');updateInfo();},8000);
+  }
+}
+
+async function sceneFailQueen(){
+  const qn=Object.values(ND).find(n=>n.queen&&!n.failed);
+  if(!qn){log('No active queen!','error');return;}
+  log(`⚡ API → POST /fail_queen (killing Node ${qn.id} — ${qn.label})`,'queen');
+  triggerFireNode(qn.id);
+  
+  if(apiConnected){
+    const res=await apiCall('POST','/fail_queen');
+    if(res.ok){
+      const oldQ=res.data.old_queen||qn.id;
+      const newQ=res.data.new_queen;
+      ND[oldQ].failed=true;ND[oldQ].queen=false;
+      if(newQ&&ND[newQ]){
+        Object.values(ND).forEach(n=>n.queen=false);ND[newQ].queen=true;
+        electAnim={from:oldQ,to:newQ,t:0};
+        log(`♛ Backend: emergency election → Node ${newQ}`,'queen');
+      }
+      updateInfo();
+      setTimeout(()=>{ND[oldQ].failed=false;ND[oldQ].load=15;log(`↺ Node ${oldQ} recovered`,'success');updateInfo();},8000);
+    }
+  }else{
+    // Simulation
+    qn.failed=true;qn.queen=false;
+    failAnim={nodeId:qn.id,t:0,fire:true};
+    log(`💀 [SIM] QUEEN Node ${qn.id} (${qn.label}) ASSASSINATED!`,'error');
+    setTimeout(()=>{
+      const rem=Object.values(ND).filter(n=>!n.failed);
+      if(!rem.length)return;
+      const newQ=rem.reduce((a,b)=>a.load<b.load?a:b);
+      electAnim={from:qn.id,to:newQ.id,t:0};
+      log(`⚡ [SIM] Emergency re-election → Node ${newQ.id} (${newQ.label})`,'queen');
+    },800);
+    updateInfo();
+    setTimeout(()=>{qn.failed=false;qn.load=20;log(`↺ Node ${qn.id} recovered`,'success');updateInfo();},8000);
+  }
+}
+
+async function sceneChaos(){
+  log('💀 CHAOS MODE — failing 2 nodes, watching self-healing…','error');
+  const act=Object.values(ND).filter(n=>!n.failed&&!n.queen);
+  if(act.length<2){log('Not enough nodes for chaos','error');return;}
+  const [v1,v2]=[act[0],act[1]];
+  
+  // Fail first node
+  triggerFireNode(v1.id);
+  v1.failed=true;
+  log(`🔥 Chaos: Node ${v1.id} (${v1.label}) going down!`,'error');
+  if(apiConnected)await apiCall('POST',`/fail_node/${v1.id}`);
+  
+  setTimeout(async()=>{
+    // Fail second node
+    triggerFireNode(v2.id);
+    v2.failed=true;
+    log(`🔥 Chaos: Node ${v2.id} (${v2.label}) going down!`,'error');
+    if(apiConnected)await apiCall('POST',`/fail_node/${v2.id}`);
+    updateInfo();
+    log('🌐 Network rerouting around failures…','info');
+    
+    // Send packet to show rerouting
+    const remaining=Object.values(ND).filter(n=>!n.failed);
+    if(remaining.length>=2){
+      setTimeout(()=>{
+        const s=remaining[0],d=remaining[remaining.length-1];
+        doSend(s.id,d.id);
+        log(`📦 Rerouted packet ${s.id}→${d.id} — swarm intelligence adapting!`,'success');
+      },1200);
+    }
+    // Recover both after 7s
+    setTimeout(()=>{
+      v1.failed=false;v1.load=25;v2.failed=false;v2.load=30;
+      log('✓ Both nodes recovered — network fully healed','success');
+      updateInfo();
+      if(apiConnected){apiCall('POST','/elect_queen');}
+    },7000);
+  },1500);
+}
+
+async function sceneReset(){
+  log('↺ API → POST /elect_queen + full reset','info');
+  if(apiConnected){
+    await apiCall('POST','/elect_queen');
+    await syncFromBackend();
+  }
+  resetAll();
+  log('✓ Network restored to initial state','success');
+}
+
+/* ─── FIRE ANIMATION helper ─── */
+function triggerFireNode(nid){
+  failAnim={nodeId:nid,t:0,fire:true};
+  fireParticles[nid]=[];
+  // Spawn fire particles
+  for(let i=0;i<20;i++){
+    fireParticles[nid].push({
+      x:0,y:0,vx:(Math.random()-.5)*3,vy:-(1.5+Math.random()*3),
+      life:1,size:3+Math.random()*6,hue:Math.random()>0.5?30:15
+    });
+  }
+}
 
 /* ════════════════════════════════════════════
    CANVAS ENGINE
@@ -412,6 +785,10 @@ const EDGES=[
   {a:4,b:6,score:9},{a:5,b:6,score:8},
   {a:2,b:5,score:3},{a:4,b:5,score:6},
 ];
+
+// Fire particles per node
+const fireParticles={};
+
 function nx(n){return n.x*W;}
 function ny(n){return n.y*H;}
 
@@ -434,10 +811,10 @@ function findRoute(src,dst){
 
 /* ─── STATE ─── */
 let SPEED=1.5,totalPkts=0,busy=false;
-const packets=[]; // {path,t,id}
-let queenAnim=null; // {path,t}
-let failAnim=null;  // {nodeId,t}
-let electAnim=null; // {from,to,t}
+const packets=[];
+let queenAnim=null;
+let failAnim=null;
+let electAnim=null;
 let pathHL=null;
 
 function lerp(a,b,t){return a+(b-a)*t;}
@@ -459,7 +836,6 @@ function drawEdges(){
     if(dead){
       ctx.strokeStyle='rgba(224,84,84,.12)';ctx.lineWidth=.8;ctx.setLineDash([3,8]);
     } else if(isHL){
-      // Glowing solid line for active path
       ctx.shadowColor='rgba(245,166,35,.8)';ctx.shadowBlur=10;
       ctx.strokeStyle='rgba(245,166,35,.85)';ctx.lineWidth=2.5;ctx.setLineDash([]);
     } else if(e.score>=8){
@@ -470,38 +846,30 @@ function drawEdges(){
     ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
     ctx.shadowBlur=0;
 
-    // Animated dots on ALL active edges
     if(!dead&&!isHL&&e.score>=7){
       ctx.setLineDash([]);
       const phase=((now*(0.1+e.score*0.015))%1);
       const px=lerp(ax,bx,phase),py=lerp(ay,by,phase);
       ctx.beginPath();ctx.arc(px,py,1.8,0,Math.PI*2);
-      ctx.fillStyle=`rgba(245,166,35,0.2)`;ctx.fill();
+      ctx.fillStyle='rgba(245,166,35,0.2)';ctx.fill();
     }
 
-    // DOTTED TRAIL for highlighted path — animated marching ants
     if(isHL&&!dead){
       ctx.save();
       ctx.strokeStyle='rgba(255,220,80,.65)';
       ctx.lineWidth=2;
       const offset=(now*60)%16;
-      ctx.setLineDash([6,10]);
-      ctx.lineDashOffset=-offset;
+      ctx.setLineDash([6,10]);ctx.lineDashOffset=-offset;
       ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
-
-      // Arrowhead midpoint
       const ang=Math.atan2(by-ay,bx-ax);
       const mx2=(ax+bx)/2,my2=(ay+by)/2;
-      ctx.setLineDash([]);ctx.lineWidth=1.8;
-      ctx.strokeStyle='rgba(245,166,35,.9)';
+      ctx.setLineDash([]);ctx.lineWidth=1.8;ctx.strokeStyle='rgba(245,166,35,.9)';
       ctx.beginPath();
       ctx.moveTo(mx2+10*Math.cos(ang),my2+10*Math.sin(ang));
       ctx.lineTo(mx2+10*Math.cos(ang)+7*Math.cos(ang+2.5),my2+10*Math.sin(ang)+7*Math.sin(ang+2.5));
       ctx.moveTo(mx2+10*Math.cos(ang),my2+10*Math.sin(ang));
       ctx.lineTo(mx2+10*Math.cos(ang)+7*Math.cos(ang-2.5),my2+10*Math.sin(ang)+7*Math.sin(ang-2.5));
       ctx.stroke();
-
-      // Score badge
       ctx.fillStyle='rgba(13,8,0,.85)';
       ctx.beginPath();ctx.rect(mx2-18,my2-18,36,16);ctx.fill();
       ctx.fillStyle='rgba(245,166,35,.9)';ctx.font='600 9px DM Mono,monospace';
@@ -512,13 +880,76 @@ function drawEdges(){
   });
 }
 
+/* ─── FIRE DRAWING ─── */
+function drawFire(nodeId, dt){
+  const x=nx(ND[nodeId]),y=ny(ND[nodeId]);
+  const NR=26;
+  const now=Date.now()/1000;
+  const fps=dt;
+
+  // Red glow behind node
+  const grd=ctx.createRadialGradient(x,y,0,x,y,NR*3);
+  grd.addColorStop(0,'rgba(255,60,0,.35)');
+  grd.addColorStop(0.4,'rgba(255,100,0,.15)');
+  grd.addColorStop(1,'rgba(255,60,0,0)');
+  ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y,NR*3,0,Math.PI*2);ctx.fill();
+
+  // Animated fire tongues using sine
+  for(let t=0;t<8;t++){
+    const angle=-Math.PI/2+(t/8)*Math.PI*2;
+    const wobble=Math.sin(now*5+t*1.3)*0.3;
+    const r=NR*0.6+Math.abs(Math.sin(now*4+t))*NR*0.8;
+    const fx=x+Math.cos(angle+wobble)*r;
+    const fy=y+Math.sin(angle+wobble)*r - NR*0.4;
+    const fireGrd=ctx.createRadialGradient(fx,fy,0,fx,fy,12);
+    const alpha=0.6+Math.sin(now*6+t)*0.3;
+    fireGrd.addColorStop(0,`rgba(255,255,100,${alpha})`);
+    fireGrd.addColorStop(0.4,`rgba(255,120,0,${alpha*0.8})`);
+    fireGrd.addColorStop(1,'rgba(255,30,0,0)');
+    ctx.fillStyle=fireGrd;ctx.beginPath();ctx.arc(fx,fy,10+Math.sin(now*7+t)*3,0,Math.PI*2);ctx.fill();
+  }
+
+  // Sparks shooting up
+  if(!fireParticles[nodeId])fireParticles[nodeId]=[];
+  // Spawn new sparks
+  if(Math.random()<0.4){
+    fireParticles[nodeId].push({
+      x:x+(Math.random()-.5)*NR*1.2,
+      y:y+(Math.random()-.5)*NR*0.6,
+      vx:(Math.random()-.5)*2.5,vy:-(2+Math.random()*4),
+      life:1,size:2+Math.random()*4,
+      hue:Math.random()>0.5?30:15
+    });
+  }
+  // Draw & update sparks
+  fireParticles[nodeId]=fireParticles[nodeId].filter(p=>{
+    p.life-=fps*1.5;p.x+=p.vx;p.y+=p.vy;p.vy+=0.08;
+    if(p.life<=0)return false;
+    const sparkColor=p.hue===30?`rgba(255,200,50,${p.life})`:`rgba(255,80,20,${p.life})`;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+    ctx.fillStyle=sparkColor;ctx.fill();
+    return true;
+  });
+
+  // Smoke wisps drifting up
+  for(let s=0;s<3;s++){
+    const smokeX=x+(Math.sin(now*2+s*2))*NR*0.8;
+    const smokeY=y-NR-20-(now*30+s*40)%80;
+    const smokeAlpha=0.05+Math.sin(now+s)*0.03;
+    ctx.beginPath();ctx.arc(smokeX,smokeY,8+s*4,0,Math.PI*2);
+    ctx.fillStyle=`rgba(150,100,60,${smokeAlpha})`;ctx.fill();
+  }
+}
+
 /* ─── DRAW NODE ─── */
 const NR=26;
-function hexPt(cx,cy,r,a){return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
-function drawNode(n){
+function drawNode(n,dt){
   const x=nx(n),y=ny(n),{id,label,load,queen,failed}=n;
   const now=Date.now()/1000;
   ctx.save();
+
+  // Draw fire BEHIND node when failed
+  if(failed){drawFire(id,dt||0.016);}
 
   // Queen outer pulse rings
   if(queen&&!failed){
@@ -529,19 +960,18 @@ function drawNode(n){
       ctx.strokeStyle=`rgba(245,166,35,${alpha})`;ctx.lineWidth=1;ctx.setLineDash(r===1?[4,4]:[]);ctx.stroke();
     }
     ctx.setLineDash([]);
-    // Ambient glow
     const grd=ctx.createRadialGradient(x,y,0,x,y,NR+40);
     grd.addColorStop(0,'rgba(245,166,35,.12)');grd.addColorStop(1,'rgba(245,166,35,0)');
     ctx.fillStyle=grd;ctx.beginPath();ctx.arc(x,y,NR+40,0,Math.PI*2);ctx.fill();
   }
 
-  // Fail shockwave
+  // Fail shockwave rings
   if(failAnim&&failAnim.nodeId===id){
     const ft=failAnim.t;
     [0,.4,.8].forEach(off=>{
       const t2=Math.min(1,(ft+off)%1);
       ctx.beginPath();ctx.arc(x,y,NR*(1+t2*2.5),0,Math.PI*2);
-      ctx.strokeStyle=`rgba(224,84,84,${(1-t2)*.5})`;ctx.lineWidth=2;ctx.setLineDash([]);ctx.stroke();
+      ctx.strokeStyle=`rgba(224,84,84,${(1-t2)*.6})`;ctx.lineWidth=2;ctx.setLineDash([]);ctx.stroke();
     });
   }
 
@@ -555,7 +985,11 @@ function drawNode(n){
   ctx.closePath();
 
   if(failed){
-    ctx.fillStyle='rgba(224,84,84,.14)';ctx.strokeStyle='rgba(224,84,84,.55)';ctx.lineWidth=1.5;
+    // Flicker effect on failed node
+    const flicker=0.1+Math.abs(Math.sin(now*12))*0.15;
+    ctx.fillStyle=`rgba(180,30,30,${flicker*2})`;
+    ctx.strokeStyle=`rgba(255,80,80,${0.4+Math.sin(now*8)*.2})`;ctx.lineWidth=2.5;
+    ctx.shadowColor='rgba(255,60,0,.6)';ctx.shadowBlur=20;
   } else if(queen){
     const qg=ctx.createRadialGradient(x,y-6,2,x,y,NR);
     qg.addColorStop(0,'rgba(255,215,100,.35)');qg.addColorStop(1,'rgba(245,166,35,.18)');
@@ -566,7 +1000,6 @@ function drawNode(n){
   }
   ctx.fill();ctx.stroke();ctx.shadowBlur=0;
 
-  // Load arc ring
   if(!failed){
     const startA=-Math.PI/2,endA=startA+2*Math.PI*(load/100);
     ctx.beginPath();ctx.arc(x,y,NR-4,startA,endA);
@@ -574,26 +1007,24 @@ function drawNode(n){
     ctx.lineWidth=2.5;ctx.setLineDash([]);ctx.stroke();
   }
 
-  // ID
-  ctx.fillStyle=failed?'rgba(224,84,84,.7)':queen?'rgba(245,166,35,1)':'rgba(255,248,236,.88)';
-  ctx.font=`700 11px Syne,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle=failed?`rgba(255,${80+Math.floor(Math.sin(now*10)*30)},80,.9)`:queen?'rgba(245,166,35,1)':'rgba(255,248,236,.88)';
+  ctx.font='700 11px Syne,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText('0'+id,x,y-3);
-  // Label
-  ctx.fillStyle=failed?'rgba(224,84,84,.45)':queen?'rgba(255,210,127,.75)':'rgba(255,248,236,.35)';
-  ctx.font=`500 8px Syne,sans-serif`;ctx.fillText(label,x,y+8);
+  ctx.fillStyle=failed?'rgba(255,120,80,.6)':queen?'rgba(255,210,127,.75)':'rgba(255,248,236,.35)';
+  ctx.font='500 8px Syne,sans-serif';ctx.fillText(label,x,y+8);
 
-  // Crown
   if(queen&&!failed){ctx.font='13px serif';ctx.fillStyle='rgba(245,166,35,.95)';ctx.fillText('♛',x,y-NR-8);}
 
-  // Failed X
   if(failed){
-    ctx.strokeStyle='rgba(224,84,84,.8)';ctx.lineWidth=2;ctx.setLineDash([]);
-    ctx.beginPath();ctx.moveTo(x-8,y-8);ctx.lineTo(x+8,y+8);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(x+8,y-8);ctx.lineTo(x-8,y+8);ctx.stroke();
-    ctx.fillStyle='rgba(224,84,84,.5)';ctx.font='700 8px Syne';ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText('FAILED',x,y+NR+4);ctx.textBaseline='middle';
+    // Animated X
+    const xAlpha=0.5+Math.sin(now*6)*0.3;
+    ctx.strokeStyle=`rgba(255,100,100,${xAlpha})`;ctx.lineWidth=2.5;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(x-9,y-9);ctx.lineTo(x+9,y+9);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x+9,y-9);ctx.lineTo(x-9,y+9);ctx.stroke();
+    ctx.fillStyle='rgba(255,100,80,.7)';ctx.font='700 7px Syne';ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText('DEAD',x,y+NR+4);ctx.textBaseline='middle';
   }
-  // Port
+
   if(!failed){
     ctx.fillStyle='rgba(255,248,236,.15)';ctx.font='500 7px DM Mono,monospace';
     ctx.textBaseline='top';ctx.fillText(':510'+id,x,y+NR+4);ctx.textBaseline='middle';
@@ -613,7 +1044,6 @@ function drawPackets(){
     const py=lerp(ny(na),ny(nb),ease(segT));
 
     ctx.save();
-    // Long glowing trail
     const trailLen=10;
     for(let tr=1;tr<=trailLen;tr++){
       const tt=Math.max(0,p.t-tr*0.018);
@@ -621,60 +1051,47 @@ function drawPackets(){
       const tsT=(tt*total)-ts;
       if(ts>=0&&ts<total){
         const ta=ND[p.path[ts]],tb=ND[p.path[ts+1]];
-        const tx=lerp(nx(ta),nx(tb),ease(Math.max(0,tsT)));
-        const ty=lerp(ny(ta),ny(tb),ease(Math.max(0,tsT)));
+        const tx2=lerp(nx(ta),nx(tb),ease(Math.max(0,tsT)));
+        const ty2=lerp(ny(ta),ny(tb),ease(Math.max(0,tsT)));
         const a=(1-tr/trailLen)*0.55;
         const r=6-tr*0.45;
-        if(r>0){ctx.beginPath();ctx.arc(tx,ty,r,0,Math.PI*2);ctx.fillStyle=`rgba(255,210,120,${a})`;ctx.fill();}
+        if(r>0){ctx.beginPath();ctx.arc(tx2,ty2,r,0,Math.PI*2);ctx.fillStyle=`rgba(255,210,120,${a})`;ctx.fill();}
       }
     }
-    // Core packet
     ctx.shadowColor='rgba(255,200,80,.9)';ctx.shadowBlur=20;
     ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);
     ctx.fillStyle='rgba(255,220,100,1)';ctx.fill();ctx.shadowBlur=0;
     ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
     ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();
-    // Packet ID label
-    ctx.fillStyle='rgba(13,8,0,.8)';ctx.font='700 7px DM Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('PKT',px,py);
+    ctx.fillStyle='rgba(13,8,0,.8)';ctx.font='700 6px DM Mono,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('🐝',px,py);
     ctx.restore();
   });
 }
 
-/* ─── DRAW QUEEN SPRITE ─── */
+/* ─── QUEEN SPRITE ─── */
 function drawQueenSprite(x,y,angle,t){
   ctx.save();ctx.translate(x,y);ctx.rotate(angle+Math.PI/2);
-
-  // Wing flutter
   const flutter=Math.sin(t*20)*0.3;
-  // Left wing
   ctx.save();ctx.rotate(-0.4+flutter);
   ctx.fillStyle='rgba(199,146,234,.55)';ctx.beginPath();ctx.ellipse(-10,-6,10,6,-.4,0,Math.PI*2);ctx.fill();
   ctx.restore();
-  // Right wing
   ctx.save();ctx.rotate(0.4-flutter);
   ctx.fillStyle='rgba(199,146,234,.55)';ctx.beginPath();ctx.ellipse(10,-6,10,6,.4,0,Math.PI*2);ctx.fill();
   ctx.restore();
-
-  // Body
   ctx.fillStyle='rgba(245,166,35,.95)';ctx.beginPath();ctx.ellipse(0,2,8,11,0,0,Math.PI*2);ctx.fill();
-  // Head
   ctx.fillStyle='rgba(245,166,35,1)';ctx.beginPath();ctx.arc(0,-10,6,0,Math.PI*2);ctx.fill();
-  // Stripes
   ctx.fillStyle='rgba(13,8,0,.65)';
   [-2,2,6].forEach(oy=>{ctx.beginPath();ctx.ellipse(0,oy,8,2,0,0,Math.PI*2);ctx.fill();});
-  // Eyes
   ctx.fillStyle='#000';ctx.beginPath();ctx.arc(-2.5,-11,1.5,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(2.5,-11,1.5,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(-2,-11.5,0.6,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(3,-11.5,0.6,0,Math.PI*2);ctx.fill();
-  // Crown
   ctx.fillStyle='rgba(255,220,0,1)';ctx.font='bold 11px serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText('♛',0,-22);
-
   ctx.restore();
 }
 
 function drawQueenAnim(){
-  if(!queenAnim || !queenAnim.path || queenAnim.path.length < 2) return;
+  if(!queenAnim||!queenAnim.path||queenAnim.path.length<2)return;
   const{path,t}=queenAnim;
   const total=path.length-1;
   const seg=Math.min(Math.floor(t*total),total-1);
@@ -684,7 +1101,6 @@ function drawQueenAnim(){
   const py=lerp(ny(na),ny(nb),ease(segT));
   const angle=Math.atan2(ny(nb)-ny(na),nx(nb)-nx(na));
 
-  // Purple trail
   ctx.save();
   for(let tr=1;tr<=12;tr++){
     const tt=Math.max(0,t-tr*0.015);
@@ -692,18 +1108,16 @@ function drawQueenAnim(){
     const tsT=(tt*total)-ts;
     if(ts>=0&&ts<total){
       const ta=ND[path[ts]],tb=ND[path[ts+1]];
-      const tx=lerp(nx(ta),nx(tb),ease(Math.max(0,tsT)));
-      const ty=lerp(ny(ta),ny(tb),ease(Math.max(0,tsT)));
+      const tx2=lerp(nx(ta),nx(tb),ease(Math.max(0,tsT)));
+      const ty2=lerp(ny(ta),ny(tb),ease(Math.max(0,tsT)));
       const r=Math.max(0,5.5-tr*0.4);
-      ctx.beginPath();ctx.arc(tx,ty,r,0,Math.PI*2);
+      ctx.beginPath();ctx.arc(tx2,ty2,r,0,Math.PI*2);
       ctx.fillStyle=`rgba(199,146,234,${(1-tr/12)*0.5})`;ctx.fill();
     }
   }
-  // Purple glow
   ctx.shadowColor='rgba(199,146,234,.6)';ctx.shadowBlur=18;
   drawQueenSprite(px,py,angle,t*queenAnim.path.length);
-  ctx.shadowBlur=0;
-  ctx.restore();
+  ctx.shadowBlur=0;ctx.restore();
 }
 
 /* ─── ELECT ANIMATION ─── */
@@ -712,14 +1126,12 @@ function drawElectAnim(){
   const{to,t}=electAnim;
   const n=ND[to];
   const x=nx(n),y=ny(n);
-  // Crown dropping from above
   const dy=lerp(-80,0,ease(t));
   ctx.save();
   ctx.globalAlpha=Math.min(1,t*3);
   ctx.shadowColor='rgba(199,146,234,.8)';ctx.shadowBlur=24;
   ctx.font='20px serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText('👑',x,y+dy-NR-20);
-  // Sparkle rings
   for(let r=0;r<3;r++){
     const ring=(t-r*.1)*NR*3;
     if(ring>0&&ring<NR*4){
@@ -746,27 +1158,21 @@ function render(ts){
   ctx.clearRect(0,0,W,H);
   drawBg();
   drawEdges();
-  Object.values(ND).forEach(drawNode);
+  Object.values(ND).forEach(n=>drawNode(n,dt));
   drawElectAnim();
   drawPackets();
   drawQueenAnim();
 
-  // Advance packets
   const alive=[];
   packets.forEach(p=>{
-    const len = Math.max(1, p.path.length - 1);
-p.t += dt / len * 0.55;
+    const len=Math.max(1,p.path.length-1);
+    p.t+=dt/len*0.55;
     if(p.t>=1){onPktDone(p);}else{alive.push(p);}
   });
   packets.length=0;packets.push(...alive);
 
-  // Advance queen
   if(queenAnim){queenAnim.t+=dt/queenAnim.path.length*0.32;if(queenAnim.t>=1){queenAnim=null;log('Queen returned to base','queen');}}
-
-  // Advance fail
-  if(failAnim){failAnim.t+=dt*1.4;if(failAnim.t>=1)failAnim=null;}
-
-  // Advance elect
+  if(failAnim){failAnim.t+=dt*1.4;if(failAnim.t>=1){if(!ND[failAnim.nodeId].failed)failAnim=null;else failAnim.t=0;}}
   if(electAnim){electAnim.t+=dt*0.6;if(electAnim.t>=1){applyElect();electAnim=null;}}
 
   requestAnimationFrame(render);
@@ -795,8 +1201,8 @@ function userSendPacket(){
   doSend(s,d);
 }
 
-function doSend(src,dst){
-  const path=findRoute(src,dst);
+function doSend(src,dst,forcePath=null){
+  const path=forcePath||findRoute(src,dst);
   if(!path){log(`No route ${src}→${dst}`,'error');return;}
   setBusy(true);pathHL=path;updatePathUI(path);
   log(`→ Packet ${src}→${dst} | Path:[${path.join('→')}]`,'info');
@@ -806,7 +1212,7 @@ function doSend(src,dst){
 }
 
 function queenVisit(){
-  if(busy||queenAnim)return;
+  if(queenAnim)return;
   const qn=Object.values(ND).find(n=>n.queen&&!n.failed);
   if(!qn){log('No active queen!','error');return;}
   const act=Object.values(ND).filter(n=>!n.failed&&n.id!==qn.id).sort(()=>Math.random()-.5).slice(0,3);
@@ -825,8 +1231,9 @@ function failRandomNode(){
   const victim=candidates.length?candidates[Math.floor(Math.random()*candidates.length)]:act[Math.floor(Math.random()*act.length)];
   const wasQueen=victim.queen;
   victim.failed=true;if(victim.queen)victim.queen=false;
-  failAnim={nodeId:victim.id,t:0};
-  log(`💥 Node ${victim.id} (${victim.label}) FAILED!`,'error');
+  // FIRE!
+  triggerFireNode(victim.id);
+  log(`🔥 Node ${victim.id} (${victim.label}) FAILED — on fire!`,'error');
   pathHL=null;updatePathUI(null);
   if(wasQueen){
     setTimeout(()=>{
@@ -838,7 +1245,7 @@ function failRandomNode(){
     },800);
   }
   updateInfo();
-  setTimeout(()=>{victim.failed=false;victim.load=Math.floor(20+Math.random()*30);log(`↺ Node ${victim.id} (${victim.label}) recovered`,'success');updateInfo();},6000);
+  setTimeout(()=>{victim.failed=false;victim.load=Math.floor(20+Math.random()*30);fireParticles[victim.id]=[];log(`↺ Node ${victim.id} (${victim.label}) recovered`,'success');updateInfo();},7000);
 }
 
 function applyElect(){
@@ -850,6 +1257,7 @@ function applyElect(){
 
 function resetAll(){
   pathHL=null;packets.length=0;queenAnim=null;failAnim=null;electAnim=null;busy=false;
+  Object.keys(fireParticles).forEach(k=>fireParticles[k]=[]);
   [34,61,18,47,72,29].forEach((l,i)=>{const n=ND[i+1];n.load=l;n.failed=false;n.queen=i===2;});
   document.getElementById('sPkts').textContent='0';totalPkts=0;
   updateInfo();updatePathUI(null);log('Network reset to initial state','info');
@@ -871,10 +1279,10 @@ function updateInfo(){
   nm.innerHTML=Object.values(ND).map(n=>`<div>
     <div style="display:flex;justify-content:space-between;font-size:.68rem;margin-bottom:2px;">
       <span style="color:rgba(255,248,236,${n.failed ? 0.25 : 0.55})">N${n.id} ${n.label}</span>
-      <span style="font-family:'DM Mono',monospace;color:${n.failed?'var(--danger)':n.queen?'var(--honey)':'rgba(255,248,236,.45)'};">${n.failed?'FAIL':n.load+'%'}</span>
+      <span style="font-family:'DM Mono',monospace;color:${n.failed?'var(--danger)':n.queen?'var(--honey)':'rgba(255,248,236,.45)'};">${n.failed?'🔥 DEAD':n.load+'%'}</span>
     </div>
     <div style="height:3px;background:rgba(255,248,236,.06);border-radius:2px;overflow:hidden;">
-      <div style="height:100%;width:${n.failed?0:n.load}%;background:${n.failed?'var(--danger)':n.queen?'linear-gradient(90deg,var(--honey),var(--amber))':'linear-gradient(90deg,var(--info),rgba(91,173,240,.4))'};border-radius:2px;transition:width .5s;"></div>
+      <div style="height:100%;width:${n.failed?100:n.load}%;background:${n.failed?'linear-gradient(90deg,#ff4422,#ff8833)':n.queen?'linear-gradient(90deg,var(--honey),var(--amber))':'linear-gradient(90deg,var(--info),rgba(91,173,240,.4))'};border-radius:2px;transition:width .5s;"></div>
     </div></div>`).join('');
 }
 
@@ -893,7 +1301,7 @@ function log(msg,type='info'){
   const cl={success:'ls',error:'le',info:'li',queen:'lq'}[type]||'li';
   d.innerHTML=`<span class="log-time">${ts}</span><span class="${cl}">${ic}</span><span>${msg}</span>`;
   lb.appendChild(d);lb.scrollTop=lb.scrollHeight;
-  if(lb.children.length>50)lb.removeChild(lb.firstChild);
+  if(lb.children.length>80)lb.removeChild(lb.firstChild);
 }
 
 /* ─── AUTO SIM ─── */
@@ -906,25 +1314,35 @@ setInterval(()=>{
     const act=Object.values(ND).filter(n=>!n.failed).map(n=>n.id);
     if(act.length>=2){let s,d;do{s=act[Math.floor(Math.random()*act.length)];d=act[Math.floor(Math.random()*act.length)];}while(s===d);doSend(s,d);}
   }
-},4000);
+},4500);
 setInterval(()=>{
   Object.values(ND).forEach(n=>{if(!n.failed)n.load=Math.min(95,Math.max(5,n.load+Math.floor(Math.random()*7)-3));});
   updateInfo();
 },2500);
+
+// Poll backend every 5s to sync if connected
+setInterval(async()=>{
+  if(apiConnected)await syncFromBackend();
+},5000);
+
+// Check API connection on load
+setTimeout(checkApiConnection, 500);
+// Retry connection check every 10s
+setInterval(checkApiConnection, 10000);
 
 /* ─── API CODES ─── */
 const CM={
   status:{l:'GET /status → 200 OK',b:`<span class="cc">// All node states</span>
 { <span class="ck">"nodes"</span>: { <span class="ck">"1"</span>:{ <span class="ck">"load"</span>:<span class="cn">34</span>,<span class="ck">"is_queen"</span>:<span class="cn">false</span>,<span class="ck">"status"</span>:<span class="cs">"normal"</span>},
                <span class="ck">"3"</span>:{ <span class="ck">"load"</span>:<span class="cn">18</span>,<span class="ck">"is_queen"</span>:<span class="cn">true</span>, <span class="ck">"status"</span>:<span class="cs">"normal"</span>} }}`},
-  queen:{l:'GET /queen → 200 OK',b:`{ <span class="ck">"queen"</span>:{ <span class="ck">"id"</span>:<span class="cn">3</span>,<span class="ck">"load"</span>:<span class="cn">18</span>,<span class="ck">"status"</span>:<span class="cs">"normal"</span>,<span class="ck">"elected_at"</span>:<span class="cs">"2026-03-10T09:23:07"</span>}}`},
-  send:{l:'POST /send_packet → 200 OK',b:`<span class="cc">// Request</span> { <span class="ck">"source"</span>:<span class="cn">1</span>, <span class="ck">"destination"</span>:<span class="cn">6</span> }
+  queen:{l:'GET /queen → 200 OK',b:`{ <span class="ck">"queen_id"</span>:<span class="cn">3</span>,<span class="ck">"load"</span>:<span class="cn">18</span>}`},
+  send:{l:'POST /send_packet → 200 OK',b:`<span class="cc">// Request</span> { <span class="ck">"source"</span>:<span class="cn">1</span>, <span class="ck">"destination"</span>:<span class="cn">6</span>, <span class="ck">"data"</span>:<span class="cs">"BeeNet packet"</span> }
 <span class="cc">// Response</span>
-{ <span class="ck">"status"</span>:<span class="cs">"delivered"</span>, <span class="ck">"path"</span>:[<span class="cn">1</span>,<span class="cn">2</span>,<span class="cn">4</span>,<span class="cn">6</span>], <span class="ck">"hops"</span>:<span class="cn">3</span>, <span class="ck">"latency_ms"</span>:<span class="cn">2.4</span>}`},
-  fail:{l:'POST /fail_node/3 → 200 OK',b:`{ <span class="ck">"message"</span>:<span class="cs">"Node 3 marked failed"</span>, <span class="ck">"new_queen"</span>:{<span class="ck">"id"</span>:<span class="cn">1</span>,<span class="ck">"load"</span>:<span class="cn">22</span>}}`},
-  failqueen:{l:'POST /fail_queen → 200 OK',b:`{ <span class="ck">"old_queen"</span>:<span class="cn">3</span>, <span class="ck">"new_queen"</span>:<span class="cn">1</span>, <span class="ck">"reason"</span>:<span class="cs">"queen_failed"</span>, <span class="ck">"timestamp"</span>:<span class="cs">"2026-03-10"</span>}`},
-  logs:{l:'GET /logs/packets → 200 OK',b:`{ <span class="ck">"packets"</span>:[{ <span class="ck">"source"</span>:<span class="cn">1</span>,<span class="ck">"destination"</span>:<span class="cn">6</span>,<span class="ck">"path"</span>:<span class="cs">"[1,2,4,6]"</span>,<span class="ck">"status"</span>:<span class="cs">"delivered"</span>,<span class="ck">"timestamp"</span>:<span class="cs">"2026-03-10T09:23"</span>}]}`},
-  topology:{l:'GET /topology → 200 OK',b:`{ <span class="ck">"nodes"</span>:[<span class="cn">1</span>,<span class="cn">2</span>,<span class="cn">3</span>,<span class="cn">4</span>,<span class="cn">5</span>,<span class="cn">6</span>], <span class="ck">"edges"</span>:[[<span class="cn">1</span>,<span class="cn">2</span>],[<span class="cn">2</span>,<span class="cn">4</span>],[<span class="cn">4</span>,<span class="cn">6</span>],[<span class="cn">3</span>,<span class="cn">5</span>],[<span class="cn">5</span>,<span class="cn">6</span>],[<span class="cn">1</span>,<span class="cn">3</span>]]}`},
+{ <span class="ck">"status"</span>:<span class="cs">"delivered"</span>, <span class="ck">"source"</span>:<span class="cn">1</span>, <span class="ck">"destination"</span>:<span class="cn">6</span>}`},
+  fail:{l:'POST /fail_node/3 → 200 OK',b:`{ <span class="ck">"message"</span>:<span class="cs">"Node 3 crashed"</span>, <span class="ck">"new_queen"</span>:<span class="cn">1</span>}`},
+  failqueen:{l:'POST /fail_queen → 200 OK',b:`{ <span class="ck">"message"</span>:<span class="cs">"Queen failed"</span>, <span class="ck">"new_queen"</span>:<span class="cn">1</span>}`},
+  logs:{l:'GET /logs/packets → 200 OK',b:`{ <span class="ck">"packets"</span>:[{ <span class="ck">"source"</span>:<span class="cn">1</span>,<span class="ck">"destination"</span>:<span class="cn">6</span>,<span class="ck">"path"</span>:<span class="cs">"[1,2,4,6]"</span>,<span class="ck">"status"</span>:<span class="cs">"delivered"</span>}]}`},
+  topology:{l:'GET /topology → 200 OK',b:`{ <span class="ck">"nodes"</span>:[<span class="cn">1</span>,<span class="cn">2</span>,<span class="cn">3</span>,<span class="cn">4</span>,<span class="cn">5</span>,<span class="cn">6</span>], <span class="ck">"edges"</span>:[[<span class="cn">1</span>,<span class="cn">2</span>],[<span class="cn">2</span>,<span class="cn">4</span>],[<span class="cn">4</span>,<span class="cn">6</span>]]}`},
 };
 function showCode(key,el){
   document.querySelectorAll('.endpoint').forEach(e=>e.classList.remove('active'));
