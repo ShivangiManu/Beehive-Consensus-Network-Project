@@ -337,7 +337,6 @@ footer{border-top:.5px solid var(--border);padding:3rem 4rem;display:flex;align-
           <button class="ctrl-btn primary" id="btn-send" onclick="userSendPacket()">🐝 Auto Packet</button>
           <button class="ctrl-btn secondary" id="btn-queen" onclick="queenVisit()">👑 Queen Tour</button>
           <button class="ctrl-btn danger" id="btn-fail" onclick="failRandomNode()">💥 Fail Random</button>
-          <button class="ctrl-btn secondary" onclick="resetAll()">↺ Reset</button>
           <div class="speed-wrap">Speed: <select id="speedSel" onchange="SPEED=parseFloat(this.value)"><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5" selected>1.5×</option><option value="2">2×</option></select></div>
         </div>
       </div>
@@ -500,6 +499,7 @@ document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 ══════════════════════════════════════ */
 function apiBase(){return document.getElementById('apiBase').value.replace(/\/$/,'');}
 let apiConnected=false;
+let syncLocked=false;  // Prevents sync from overwriting a fresh reset
 
 async function apiCall(method,path,body=null){
   const url=apiBase()+path;
@@ -550,7 +550,7 @@ async function checkApiConnection(){
 }
 
 async function syncFromBackend(){
-  if(!apiConnected)return;
+  if(!apiConnected||syncLocked)return;
   const res=await apiCall('GET','/status');
   if(!res.ok)return;
   const nodes=res.data;
@@ -734,13 +734,25 @@ async function sceneChaos(){
 }
 
 async function sceneReset(){
-  log('↺ API → POST /elect_queen + full reset','info');
+  log('↺ API → POST /reset — full backend + frontend reset','info');
+  // Block the periodic sync so it cannot stomp our clean state
+  syncLocked = true;
+
   if(apiConnected){
-    await apiCall('POST','/elect_queen');
-    await syncFromBackend();
+    const res = await apiCall('POST','/reset');
+    if(res.ok){
+      const newQ = res.data.new_queen;
+      // Clear all failed flags before resetAll runs
+      Object.values(ND).forEach(n=>{n.failed=false;n.queen=false;});
+      if(newQ && ND[newQ]) ND[newQ].queen = true;
+      log(`♛ Backend reset — new queen: Node ${newQ}`,'queen');
+    }
   }
   resetAll();
-  log('✓ Network restored to initial state','success');
+  log('✓ Network fully restored to initial state','success');
+
+  // Re-enable sync after backend settles
+  setTimeout(()=>{ syncLocked = false; }, 2000);
 }
 
 /* ─── FIRE ANIMATION helper ─── */

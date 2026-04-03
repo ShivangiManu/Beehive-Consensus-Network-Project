@@ -419,6 +419,25 @@ def get_topology():
     })
 
 
+@app.route("/reset", methods=["POST"])
+def api_reset():
+    """Full network reset: restore all nodes to initial state and re-elect queen."""
+    global queen_id, failed_nodes
+
+    with queen_lock:
+        failed_nodes = set()
+        for node_id, node in nodes.items():
+            node.status    = "normal"
+            node.is_queen  = False
+            node.load      = 0
+            node.route_scores = {nb: 1 for nb in node.neighbors}
+
+    new_queen = elect_queen(nodes, reason="reset")
+    visualize_network(graph, highlight_queen=new_queen,
+                      failed_nodes=set(), filename="network_initial.png")
+    return jsonify({"message": "Network reset", "new_queen": new_queen})
+
+
 # ============================================================
 # MAIN
 # ============================================================
