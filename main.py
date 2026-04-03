@@ -1,4 +1,3 @@
-
 import threading
 import time
 import random
@@ -10,6 +9,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from datetime import datetime
 
 # ============================================================
@@ -305,6 +305,7 @@ def send_via_socket(source_node_id, packet):
 # ============================================================
 
 app   = Flask(__name__)
+CORS(app)
 nodes = {}
 graph = None
 
