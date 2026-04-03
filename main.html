@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeeHive Network — Swarm Intelligence Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --honey: #F5A623;
+    --honey-light: #FFD27F;
+    --honey-pale: #FFF3D6;
+    --comb: #E8891A;
+    --deep: #1A0F00;
+    --dark: #0D0800;
+    --mid: #3A2200;
+    --amber-glow: #FF9500;
+    --wax: #FFC857;
+    --cream: #FFF8EC;
+    --muted: #8A6A3A;
+    --success: #4CAF7D;
+    --danger: #E05454;
+    --info: #5BADF0;
+    --border: rgba(245,166,35,0.18);
+    --border-strong: rgba(245,166,35,0.35);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--honey);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(245,166,35,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: all 0.15s ease;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* Honeycomb BG pattern */
+  .hex-bg {
+    position: fixed;
+    inset: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50V17L28 1l28 16v33L28 66zM28 100L0 84V51l28 16 28-16v33L28 100z' fill='none' stroke='%23F5A623' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 56px 100px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Ambient glow blobs */
+  .glow-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-blob-1 { width: 600px; height: 600px; background: rgba(245,166,35,0.08); top: -200px; right: -200px; }
+  .glow-blob-2 { width: 400px; height: 400px; background: rgba(255,149,0,0.06); bottom: 20%; left: -150px; }
+  .glow-blob-3 { width: 300px; height: 300px; background: rgba(255,200,87,0.05); bottom: -100px; right: 20%; }
+
+  /* Navigation */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(13,8,0,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.1rem; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--honey);
+    text-decoration: none;
+  }
+  .nav-logo .hex-icon {
+    width: 32px; height: 32px;
+    background: var(--honey);
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    display: flex; align-items: center; justify-content: center;
+    animation: hexPulse 3s ease-in-out infinite;
+  }
+  @keyframes hexPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(245,166,35,0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 20px 6px rgba(245,166,35,0.15); transform: scale(1.05); }
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: rgba(255,248,236,0.6);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--honey); }
+  .nav-badge {
+    background: linear-gradient(135deg, var(--honey), var(--comb));
+    color: var(--dark);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.45rem 1.2rem;
+    border-radius: 50px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .nav-badge:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,166,35,0.3); }
+
+  /* Sections */
+  section { position: relative; z-index: 1; }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(245,166,35,0.1);
+    border: 0.5px solid var(--border-strong);
+    border-radius: 50px;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--honey-light);
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: blink 2s ease infinite;
+  }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-title .line-honey { color: var(--honey); }
+  .hero-title .line-italic { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: rgba(255,248,236,0.55);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-weight: 400;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--honey) 0%, var(--comb) 100%);
+    color: var(--dark);
+    padding: 0.85rem 2.2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245,166,35,0.35); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--cream);
+    padding: 0.85rem 2.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 0.5px solid var(--border-strong);
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-secondary:hover { border-color: var(--honey); color: var(--honey); background: rgba(245,166,35,0.06); }
+
+  /* Floating nodes animation */
+  .floating-nodes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .f-node {
+    position: absolute;
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,248,236,0.3);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    animation: fadeUp 1s 1s ease both;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgba(245,166,35,0.6), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+  @keyframes scrollPulse { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(0.6); } }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .stat-item {
+    background: var(--dark);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .stat-item:hover { background: rgba(245,166,35,0.04); }
+  .stat-num {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--honey);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: rgba(255,248,236,0.4);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+    font-weight: 500;
+  }
+
+  /* Architecture section */
+  .arch-section {
+    padding: 8rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--honey);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px; height: 1px;
+    background: var(--honey);
+    opacity: 0.6;
+  }
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .section-title em { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; color: var(--honey-light); }
+  .section-desc {
+    color: rgba(255,248,236,0.5);
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: 480px;
+    font-weight: 400;
+  }
+
+  /* Node grid */
+  .nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 4rem;
+  }
+  .node-card {
+    background: rgba(13,8,0,0.9);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .node-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--honey), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .node-card:hover { background: rgba(245,166,35,0.04); }
+  .node-card:hover::before { opacity: 1; }
+  .node-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--honey);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    margin-bottom: 0.75rem;
+  }
+  .node-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .node-desc {
+    font-size: 0.82rem;
+    color: rgba(255,248,236,0.45);
+    line-height: 1.65;
+    font-weight: 400;
+  }
+  .node-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 1.2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .status-active .status-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .status-active { color: var(--success); }
+  .status-queen .status-dot { background: var(--honey); box-shadow: 0 0 8px var(--honey); animation: blink 1.5s infinite; }
+  .status-queen { color: var(--honey); }
+  .node-hex-bg {
+    position: absolute;
+    bottom: -20px; right: -20px;
+    font-size: 5rem;
+    opacity: 0.04;
+    pointer-events: none;
+    font-weight: 800;
+  }
+
+  /* Network Topology Live */
+  .topology-section {
+    padding: 8rem 4rem;
+    background: rgba(245,166,35,0.02);
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .topo-inner { max-width: 1200px; margin: 0 auto; }
+  .topo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .topo-canvas { position: relative; }
+  #network-svg { width: 100%; }
+
+  /* Features */
+  .features-section { padding: 8rem 4rem; max-width: 1200px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 4rem; }
+  .feature-card {
+    background: rgba(255,248,236,0.02);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .feature-card:hover { border-color: rgba(245,166,35,0.3); background: rgba(245,166,35,0.03); }
+  .feature-card.featured {
+    background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(232,137,26,0.04) 100%);
+    border-color: rgba(245,166,35,0.2);
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .feature-icon {
+    width: 44px; height: 44px;
+    background: rgba(245,166,35,0.1);
+    border: 0.5px solid rgba(245,166,35,0.2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+  }
+  .feature-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.7rem; }
+  .feature-desc { font-size: 0.85rem; color: rgba(255,248,236,0.45); line-height: 1.7; font-weight: 400; }
+  .feature-tag {
+    display: inline-block;
+    background: rgba(245,166,35,0.1);
+    border: 0.5px solid rgba(245,166,35,0.2);
+    color: var(--honey-light);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    margin-top: 1rem;
+  }
+
+  /* API section */
+  .api-section {
+    padding: 8rem 4rem;
+    background: rgba(245,166,35,0.015);
+    border-top: 0.5px solid var(--border);
+  }
+  .api-inner { max-width: 1200px; margin: 0 auto; }
+  .api-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; margin-top: 4rem; }
+  .api-endpoints { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; }
+  .endpoint {
+    background: rgba(13,8,0,0.95);
+    padding: 1.1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .endpoint:hover { background: rgba(245,166,35,0.06); }
+  .endpoint.active { background: rgba(245,166,35,0.08); border-left: 2px solid var(--honey); }
+  .method {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 400;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    min-width: 44px;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .method.get { background: rgba(91,173,240,0.15); color: var(--info); }
+  .method.post { background: rgba(76,175,125,0.15); color: var(--success); }
+  .endpoint-path {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: rgba(255,248,236,0.7);
+  }
+  .endpoint-desc { font-size: 0.75rem; color: rgba(255,248,236,0.35); margin-left: auto; }
+
+  .code-block {
+    background: rgba(0,0,0,0.5);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(0,0,0,0.3);
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dots span:nth-child(1) { background: #ff5f56; }
+  .code-dots span:nth-child(2) { background: #ffbd2e; }
+  .code-dots span:nth-child(3) { background: #27c93f; }
+  .code-lang {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(255,248,236,0.3);
+    letter-spacing: 0.08em;
+  }
+  .code-body {
+    padding: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .c-key { color: var(--info); }
+  .c-str { color: var(--honey-light); }
+  .c-num { color: var(--success); }
+  .c-comment { color: rgba(255,248,236,0.25); font-style: italic; }
+  .c-method { color: #C792EA; }
+
+  /* FAQ */
+  .faq-section { padding: 8rem 4rem; max-width: 900px; margin: 0 auto; }
+  .faq-grid { margin-top: 4rem; display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
+  .faq-item {
+    background: rgba(13,8,0,0.9);
+    padding: 1.75rem 2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .faq-item:hover { background: rgba(245,166,35,0.04); }
+  .faq-q {
+    display: flex; align-items: center; justify-content: space-between;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .faq-plus {
+    width: 22px; height: 22px;
+    border: 0.5px solid var(--border-strong);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    color: var(--honey);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .faq-item.open .faq-plus { transform: rotate(45deg); }
+  .faq-a {
+    display: none;
+    padding-top: 1rem;
+    font-size: 0.87rem;
+    color: rgba(255,248,236,0.5);
+    line-height: 1.75;
+    font-weight: 400;
+  }
+  .faq-item.open .faq-a { display: block; }
+
+  /* Footer */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-logo { color: var(--honey); font-weight: 800; font-size: 1rem; letter-spacing: 0.04em; }
+  .footer-note { font-size: 0.75rem; color: rgba(255,248,236,0.25); letter-spacing: 0.04em; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* Network SVG nodes */
+  .net-node { cursor: pointer; transition: all 0.3s; }
+  .net-node:hover circle { stroke-width: 2; }
+  .pulse-ring { animation: pulseRing 2s ease-out infinite; transform-origin: center; }
+  @keyframes pulseRing {
+    0% { opacity: 0.8; transform: scale(1); }
+    100% { opacity: 0; transform: scale(2.2); }
+  }
+
+  /* Data flow animation */
+  .packet { animation: travel 2.5s linear infinite; }
+  @keyframes travel {
+    0% { offset-distance: 0%; opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+
+  /* Ticker */
+  .ticker {
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    overflow: hidden;
+    white-space: nowrap;
+    background: rgba(245,166,35,0.02);
+    padding: 0.7rem 0;
+  }
+  .ticker-inner {
+    display: inline-flex;
+    gap: 3rem;
+    animation: ticker 20s linear infinite;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255,248,236,0.3);
+    letter-spacing: 0.08em;
+  }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .ticker-item { display: inline-flex; align-items: center; gap: 10px; }
+  .ticker-dot { width: 4px; height: 4px; background: var(--honey); border-radius: 50%; opacity: 0.5; }
+
+  /* Load bar */
+  .load-bar {
+    height: 3px;
+    background: rgba(255,248,236,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.75rem;
+  }
+  .load-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--honey), var(--amber-glow));
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.5rem 3rem; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .arch-section, .topology-section, .features-section, .api-section { padding: 5rem 1.5rem; }
+    .topo-layout, .api-grid { grid-template-columns: 1fr; }
+    .nodes-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-card.featured { grid-column: 1; display: block; }
+    .faq-section { padding: 5rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<div class="hex-bg"></div>
+<div class="glow-blob glow-blob-1"></div>
+<div class="glow-blob glow-blob-2"></div>
+<div class="glow-blob glow-blob-3"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="hex-icon"></div>
+    BeeNet
+  </a>
+  <ul class="nav-links">
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#topology">Topology</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-badge">🐝 Queen Active</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="floating-nodes" id="floating-nodes"></div>
+
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Swarm Intelligence Protocol — Live
+  </div>
+
+  <h1 class="hero-title">
+    <span class="line-honey">Beehive</span><br>
+    <span class="line-italic">Consensus</span><br>
+    Network
+  </h1>
+
+  <p class="hero-sub">
+    A self-organizing, fault-tolerant mesh network inspired by bee colonies — 
+    where every node thinks, learns, and routes like a bee finding flowers.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#topology" class="btn-primary">Explore the Hive</a>
+    <a href="#api" class="btn-secondary">API Reference →</a>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker-inner"></div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num" id="stat-packets">0</div>
+    <div class="stat-label">Packets Routed</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">6</div>
+    <div class="stat-label">Active Nodes</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="stat-uptime">99.9%</div>
+    <div class="stat-label">Network Uptime</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">~2ms</div>
+    <div class="stat-label">Avg. Latency</div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section" id="architecture">
+  <div class="reveal">
+    <div class="section-label">System Design</div>
+    <h2 class="section-title">Six nodes.<br><em>One hive mind.</em></h2>
+    <p class="section-desc">Each BeeNode runs independently, learns from past routing success, and self-heals when neighbors fail — no central brain required.</p>
+  </div>
+
+  <div class="nodes-grid reveal reveal-delay-1">
+    <div class="node-card">
+      <div class="node-id">NODE_01 · PORT 5101</div>
+      <div class="node-name">Alpha Node</div>
+      <div class="node-desc">Primary entry point. Handles inbound packet distribution and maintains neighbor score tables.</div>
+      <div class="load-bar"><div class="load-fill" style="width: 34%"></div></div>
+      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 34%</div>
+      <div class="node-hex-bg">01</div>
+    </div>
+    <div class="node-card">
+      <div class="node-id">NODE_02 · PORT 5102</div>
+      <div class="node-name">Beta Node</div>
+      <div class="node-desc">Mid-layer relay. Bridges Alpha cluster with Gamma cluster via score-weighted routing decisions.</div>
+      <div class="load-bar"><div class="load-fill" style="width: 61%"></div></div>
+      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 61%</div>
+      <div class="node-hex-bg">02</div>
+    </div>
+    <div class="node-card">
+      <div class="node-id">NODE_03 · PORT 5103</div>
+      <div class="node-name">Gamma — Queen 👑</div>
+      <div class="node-desc">Currently elected Queen. Lowest load node coordinates priority traffic and re-election on failure.</div>
+      <div class="load-bar"><div class="load-fill" style="width: 18%"></div></div>
+      <div class="node-status status-queen"><span class="status-dot"></span> Queen — Load 18%</div>
+      <div class="node-hex-bg">03</div>
+    </div>
+    <div class="node-card">
+      <div class="node-id">NODE_04 · PORT 5104</div>
+      <div class="node-name">Delta Node</div>
+      <div class="node-desc">Redundant path handler. Activates alternate routes when primary paths show elevated latency.</div>
+      <div class="load-bar"><div class="load-fill" style="width: 47%"></div></div>
+      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 47%</div>
+      <div class="node-hex-bg">04</div>
+    </div>
+    <div class="node-card">
+      <div class="node-id">NODE_05 · PORT 5105</div>
+      <div class="node-name">Epsilon Node</div>
+      <div class="node-desc">Deep mesh node. Connects remote clusters and maintains long-path score memory for efficiency.</div>
+      <div class="load-bar"><div class="load-fill" style="width: 72%"></div></div>
+      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 72%</div>
+      <div class="node-hex-bg">05</div>
+    </div>
+    <div class="node-card">
+      <div class="node-id">NODE_06 · PORT 5106</div>
+      <div class="node-name">Zeta Node</div>
+      <div class="node-desc">Destination endpoint. Logs all arriving packets to SQLite and issues delivery confirmations.</div>
+      <div class="load-bar"><div class="load-fill" style="width: 29%"></div></div>
+      <div class="node-status status-active"><span class="status-dot"></span> Active — Load 29%</div>
+      <div class="node-hex-bg">06</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOPOLOGY -->
+<section class="topology-section" id="topology">
+  <div class="topo-inner">
+    <div class="topo-layout">
+      <div class="reveal">
+        <div class="section-label">Live Topology</div>
+        <h2 class="section-title">Mesh that <em>heals itself</em></h2>
+        <p class="section-desc">
+          Packets flow across weighted edges. Each node scores its neighbors based on past success — busy paths get penalized, reliable paths get rewarded.
+        </p>
+        <br><br>
+        <div style="display:flex; flex-direction:column; gap:1rem; margin-top:0.5rem;">
+          <div style="display:flex; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,248,236,0.5);">
+            <div style="width:24px;height:2px;background:var(--honey);border-radius:1px;"></div>
+            High-score path (preferred)
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,248,236,0.5);">
+            <div style="width:24px;height:2px;background:rgba(255,248,236,0.15);border-radius:1px; border-top: 1px dashed rgba(255,248,236,0.3);"></div>
+            Low-score path (fallback)
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; font-size:0.82rem; color:rgba(255,248,236,0.5);">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--honey);box-shadow:0 0 8px var(--honey);"></div>
+            Queen node (elected leader)
+          </div>
+        </div>
+        <br>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem;">
+          <button class="btn-primary" style="font-size:0.8rem;padding:0.65rem 1.4rem;" onclick="simulatePacket()">Send Packet</button>
+          <button class="btn-secondary" style="font-size:0.8rem;padding:0.65rem 1.4rem;" onclick="simulateFailure()">Fail a Node</button>
+        </div>
+      </div>
+
+      <div class="topo-canvas reveal reveal-delay-2">
+        <svg id="network-svg" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow-filter">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#F5A623" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <!-- Edges -->
+          <g id="edges">
+            <!-- 1-2 -->
+            <line x1="120" y1="140" x2="240" y2="100" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
+            <!-- 1-3 -->
+            <line x1="120" y1="140" x2="200" y2="220" stroke="rgba(245,166,35,0.25)" stroke-width="1" stroke-dasharray="4,4"/>
+            <!-- 2-3 -->
+            <line x1="240" y1="100" x2="200" y2="220" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
+            <!-- 2-4 -->
+            <line x1="240" y1="100" x2="360" y2="140" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
+            <!-- 3-5 -->
+            <line x1="200" y1="220" x2="240" y2="320" stroke="rgba(245,166,35,0.25)" stroke-width="1" stroke-dasharray="4,4"/>
+            <!-- 4-6 -->
+            <line x1="360" y1="140" x2="380" y2="300" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
+            <!-- 5-6 -->
+            <line x1="240" y1="320" x2="380" y2="300" stroke="rgba(245,166,35,0.5)" stroke-width="1.5"/>
+            <!-- 3-4 -->
+            <line x1="200" y1="220" x2="360" y2="140" stroke="rgba(245,166,35,0.35)" stroke-width="1"/>
+          </g>
+
+          <!-- Animated packets -->
+          <g id="packets"></g>
+
+          <!-- Nodes -->
+          <g id="nodes">
+            <!-- Node 1 -->
+            <g class="net-node" onclick="selectNode(1)">
+              <circle cx="120" cy="140" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
+              <text x="120" y="145" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">01</text>
+            </g>
+            <!-- Node 2 -->
+            <g class="net-node" onclick="selectNode(2)">
+              <circle cx="240" cy="100" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
+              <text x="240" y="105" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">02</text>
+            </g>
+            <!-- Node 3 — QUEEN -->
+            <g class="net-node" id="queen-node" onclick="selectNode(3)">
+              <circle class="pulse-ring" cx="200" cy="220" r="32" fill="none" stroke="rgba(245,166,35,0.2)" stroke-width="1"/>
+              <circle cx="200" cy="220" r="26" fill="rgba(245,166,35,0.15)" stroke="var(--honey)" stroke-width="2" filter="url(#glow-filter)"/>
+              <text x="200" y="215" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">03</text>
+              <text x="200" y="228" text-anchor="middle" font-family="Syne" font-size="8" fill="#FFD27F">QUEEN</text>
+            </g>
+            <!-- Node 4 -->
+            <g class="net-node" onclick="selectNode(4)">
+              <circle cx="360" cy="140" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
+              <text x="360" y="145" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">04</text>
+            </g>
+            <!-- Node 5 -->
+            <g class="net-node" onclick="selectNode(5)">
+              <circle cx="240" cy="320" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
+              <text x="240" y="325" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">05</text>
+            </g>
+            <!-- Node 6 -->
+            <g class="net-node" onclick="selectNode(6)">
+              <circle cx="380" cy="300" r="22" fill="rgba(13,8,0,0.9)" stroke="rgba(245,166,35,0.6)" stroke-width="1.5"/>
+              <text x="380" y="305" text-anchor="middle" font-family="Syne" font-size="10" font-weight="700" fill="#F5A623">06</text>
+            </g>
+          </g>
+
+          <!-- Labels -->
+          <g font-family="Syne" font-size="9" fill="rgba(255,248,236,0.3)">
+            <text x="88" y="140">Alpha</text>
+            <text x="248" y="90">Beta</text>
+            <text x="162" y="220">Gamma</text>
+            <text x="368" y="132">Delta</text>
+            <text x="248" y="348">Epsilon</text>
+            <text x="390" y="316">Zeta</text>
+          </g>
+        </svg>
+
+        <!-- Log feed -->
+        <div id="log-feed" style="margin-top:1rem; background:rgba(0,0,0,0.4); border:0.5px solid var(--border); border-radius:10px; padding:1rem; height:100px; overflow-y:auto;">
+          <div id="log-lines" style="font-family:'DM Mono',monospace; font-size:0.7rem; line-height:1.9; color:rgba(255,248,236,0.4);">
+            <div><span style="color:var(--success)">✓</span> System initialized. Queen elected: Node 03</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="reveal">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">Built like a <em>colony</em></h2>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card featured reveal reveal-delay-1">
+      <div>
+        <div class="feature-icon">🐝</div>
+        <div class="feature-title">Swarm Intelligence Routing</div>
+        <div class="feature-desc">
+          Every node independently scores its neighbors using a reinforcement formula: <code style="font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--honey-light)">value = route_score − load_penalty</code>. Reliable paths are rewarded; congested ones are avoided automatically.
+        </div>
+        <div class="feature-tag">Core Algorithm</div>
+      </div>
+      <div>
+        <div style="background:rgba(0,0,0,0.4);border:0.5px solid var(--border);border-radius:12px;padding:1.5rem;">
+          <div style="font-family:'DM Mono',monospace;font-size:0.75rem;line-height:2;color:rgba(255,248,236,0.5);">
+            <div><span style="color:var(--info)">def</span> <span style="color:#C792EA">choose_next</span>(self, neighbors):</div>
+            <div style="padding-left:1.2rem;">scores = {}</div>
+            <div style="padding-left:1.2rem;"><span style="color:var(--info)">for</span> n <span style="color:var(--info)">in</span> neighbors:</div>
+            <div style="padding-left:2.4rem;">score = self.route_scores[n]</div>
+            <div style="padding-left:2.4rem;">penalty = n.load * 0.5</div>
+            <div style="padding-left:2.4rem; color:var(--honey-light);">scores[n] = score - penalty</div>
+            <div style="padding-left:1.2rem;"><span style="color:var(--info)">return</span> max(scores, key=scores.get)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-card reveal">
+      <div class="feature-icon">👑</div>
+      <div class="feature-title">Queen Election</div>
+      <div class="feature-desc">The least-loaded active node is elected Queen. If she fails, re-election happens in milliseconds — zero downtime, zero manual intervention.</div>
+      <div class="feature-tag">Fault Tolerance</div>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon">🔌</div>
+      <div class="feature-title">Real TCP Sockets</div>
+      <div class="feature-desc">Packets travel as actual JSON over TCP localhost sockets — not just function calls. Each node listens on its own port (5101–5106).</div>
+      <div class="feature-tag">Real Networking</div>
+    </div>
+
+    <div class="feature-card reveal">
+      <div class="feature-icon">🗄️</div>
+      <div class="feature-title">SQLite Persistence</div>
+      <div class="feature-desc">Every packet delivery, node crash, and queen election is timestamped and persisted to three SQLite tables — full audit trail included.</div>
+      <div class="feature-tag">Data Layer</div>
+    </div>
+
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Flask REST API</div>
+      <div class="feature-desc">Control the entire network over HTTP — send packets, crash nodes, inspect the queen, and view logs from Postman or any client.</div>
+      <div class="feature-tag">Interface</div>
+    </div>
+  </div>
+</section>
+
+<!-- API -->
+<section class="api-section" id="api">
+  <div class="api-inner">
+    <div class="reveal">
+      <div class="section-label">REST API</div>
+      <h2 class="section-title">Control the hive <em>over HTTP</em></h2>
+    </div>
+
+    <div class="api-grid">
+      <div class="api-endpoints reveal reveal-delay-1">
+        <div class="endpoint active" onclick="showCode('status')">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/status</span>
+          <span class="endpoint-desc">All nodes</span>
+        </div>
+        <div class="endpoint" onclick="showCode('queen')">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/queen</span>
+          <span class="endpoint-desc">Leader info</span>
+        </div>
+        <div class="endpoint" onclick="showCode('send')">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/send_packet</span>
+          <span class="endpoint-desc">Route packet</span>
+        </div>
+        <div class="endpoint" onclick="showCode('fail')">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/fail_node/:id</span>
+          <span class="endpoint-desc">Crash node</span>
+        </div>
+        <div class="endpoint" onclick="showCode('failqueen')">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/fail_queen</span>
+          <span class="endpoint-desc">Re-election</span>
+        </div>
+        <div class="endpoint" onclick="showCode('logs')">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/logs/packets</span>
+          <span class="endpoint-desc">Packet log</span>
+        </div>
+        <div class="endpoint" onclick="showCode('topology')">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/topology</span>
+          <span class="endpoint-desc">Network map</span>
+        </div>
+      </div>
+
+      <div class="code-block reveal reveal-delay-2" id="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span></span><span></span><span></span></div>
+          <div class="code-lang" id="code-lang">GET /status → 200 OK</div>
+        </div>
+        <div class="code-body" id="code-body">
+<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"nodes"</span>: {
+    <span class="c-key">"1"</span>: {
+      <span class="c-key">"id"</span>: <span class="c-num">1</span>,
+      <span class="c-key">"load"</span>: <span class="c-num">34</span>,
+      <span class="c-key">"is_queen"</span>: <span class="c-num">false</span>,
+      <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>
+    },
+    <span class="c-key">"3"</span>: {
+      <span class="c-key">"id"</span>: <span class="c-num">3</span>,
+      <span class="c-key">"load"</span>: <span class="c-num">18</span>,
+      <span class="c-key">"is_queen"</span>: <span class="c-num">true</span>,
+      <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>
+    }
+  }
+}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="reveal">
+    <div class="section-label">Faculty Q&A</div>
+    <h2 class="section-title">Expected <em>questions</em></h2>
+  </div>
+
+  <div class="faq-grid reveal reveal-delay-1">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Why bees? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Bees use swarm intelligence — no central control, each bee makes local decisions that result in globally optimal behavior. Our nodes do the same: each one independently scores paths, penalizes load, and routes packets without any global coordinator.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">How is this different from Dijkstra? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Dijkstra finds the shortest static path. Our algorithm adapts dynamically based on real-time load and historical delivery success. It's closer to reinforcement learning at the network level — paths improve over time based on outcomes.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What is the Queen's role? <span class="faq-plus">+</span></div>
+      <div class="faq-a">The Queen is the least-loaded active node at any time. She acts as coordinator for priority traffic. If she fails, re-election is immediate and automatic — the next least-loaded node is crowned. The network never stops working.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What is the routing algorithm exactly? <span class="faq-plus">+</span></div>
+      <div class="faq-a">Score-based greedy routing with load penalty: value = route_score − load_penalty. Each node picks the neighbor with the highest value. When a packet is delivered successfully, all nodes on the path get their route scores increased — reinforcement learning style.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Why SQLite and not a real database? <span class="faq-plus">+</span></div>
+      <div class="faq-a">SQLite is lightweight, needs zero installation, and is built into Python's standard library — perfect for a simulation and demo environment. For production, the same schema works directly with PostgreSQL.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">What happens if all nodes fail? <span class="faq-plus">+</span></div>
+      <div class="faq-a">The election function returns None, and the Flask API returns a graceful error response with a clear message. The system handles total network collapse without crashing — it waits for at least one node to recover.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🐝 BeeHive Network</div>
+  <div class="footer-note">Swarm Intelligence Protocol · Built with Python, Flask, NetworkX, SQLite</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a,button,.faq-item,.endpoint,.net-node,.node-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width = '12px'; cursor.style.height = '12px'; });
+  });
+
+  // Floating nodes
+  const floatCont = document.getElementById('floating-nodes');
+  const colors = ['#F5A623','#FFD27F','#E8891A','#FFC857','#FF9500'];
+  for(let i = 0; i < 18; i++) {
+    const d = document.createElement('div');
+    d.className = 'f-node';
+    const size = 4 + Math.random() * 10;
+    d.style.cssText = `
+      width:${size}px;height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}%;
+      animation-duration:${8 + Math.random()*12}s;
+      animation-delay:${Math.random()*-12}s;
+      opacity:0.15;
+    `;
+    floatCont.appendChild(d);
+  }
+
+  // Ticker
+  const tData = ['NODE_01 ACTIVE','NODE_02 ACTIVE','NODE_03 QUEEN ELECTED','NODE_04 ACTIVE','NODE_05 ACTIVE','NODE_06 ACTIVE','PACKET ROUTED 1→3→6','LOAD BALANCED','SWARM PROTOCOL RUNNING','TCP SOCKETS OPEN','SQLITE DB CONNECTED','FLASK API PORT 5000'];
+  const tickerEl = document.getElementById('ticker-inner');
+  const full = [...tData,...tData].map(t=>`<span class="ticker-item"><span class="ticker-dot"></span>${t}</span>`).join('');
+  tickerEl.innerHTML = full;
+
+  // Packet counter animation
+  let pCount = 0;
+  const pEl = document.getElementById('stat-packets');
+  function incPackets() {
+    pCount += Math.floor(Math.random()*3)+1;
+    pEl.textContent = pCount.toLocaleString();
+    setTimeout(incPackets, 1200 + Math.random()*800);
+  }
+  incPackets();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => obs.observe(r));
+
+  // FAQ
+  function toggleFaq(el) {
+    el.classList.toggle('open');
+  }
+
+  // Network simulation
+  const nodePositions = {1:{x:120,y:140},2:{x:240,y:100},3:{x:200,y:220},4:{x:360,y:140},5:{x:240,y:320},6:{x:380,y:300}};
+  const routes = [[1,2,4,6],[1,3,5,6],[1,2,3,5,6]];
+  let activeFailNode = null;
+
+  function addLog(msg, type='info') {
+    const ll = document.getElementById('log-lines');
+    const icon = type==='success'?'<span style="color:var(--success)">✓</span>':type==='error'?'<span style="color:var(--danger)">✗</span>':'<span style="color:var(--honey)">→</span>';
+    const d = document.createElement('div');
+    d.innerHTML = `${icon} ${msg}`;
+    ll.appendChild(d);
+    ll.parentElement.scrollTop = ll.parentElement.scrollHeight;
+    if(ll.children.length > 20) ll.removeChild(ll.firstChild);
+  }
+
+  function simulatePacket() {
+    const route = routes[Math.floor(Math.random()*routes.length)];
+    const svg = document.getElementById('network-svg');
+    const packetsG = document.getElementById('packets');
+    addLog(`Packet: Node ${route[0]} → Node ${route[route.length-1]} via [${route.join('→')}]`, 'info');
+
+    for(let i = 0; i < route.length - 1; i++) {
+      const a = nodePositions[route[i]], b = nodePositions[route[i+1]];
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('r','5');
+      circle.setAttribute('fill','#FFD27F');
+      circle.setAttribute('opacity','0.9');
+      packetsG.appendChild(circle);
+      const delay = i * 600;
+      setTimeout(() => {
+        let t = 0;
+        const step = () => {
+          t += 0.03;
+          if(t > 1) { packetsG.removeChild(circle); return; }
+          const x = a.x + (b.x-a.x)*t, y = a.y + (b.y-a.y)*t;
+          circle.setAttribute('cx', x);
+          circle.setAttribute('cy', y);
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }, delay);
+    }
+    setTimeout(() => addLog(`Delivered to Node ${route[route.length-1]}`, 'success'), route.length * 600);
+  }
+
+  function simulateFailure() {
+    const ids = [1,2,4,5];
+    const id = ids[Math.floor(Math.random()*ids.length)];
+    const nodes = document.getElementById('nodes');
+    const allCircles = nodes.querySelectorAll('circle');
+    allCircles[id-1] && allCircles.forEach((c,i) => {
+      if(i === id-1) { c.setAttribute('stroke','rgba(224,84,84,0.8)'); c.setAttribute('fill','rgba(224,84,84,0.1)'); }
+    });
+    addLog(`Node ${id} failed! Rerouting...`, 'error');
+    setTimeout(() => {
+      allCircles.forEach((c,i) => {
+        if(i === id-1) { c.setAttribute('stroke','rgba(245,166,35,0.6)'); c.setAttribute('fill','rgba(13,8,0,0.9)'); }
+      });
+      addLog(`Node ${id} recovered. Network self-healed.`, 'success');
+    }, 3000);
+  }
+
+  // API code blocks
+  const codeData = {
+    status: { label: 'GET /status → 200 OK', body: `<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"nodes"</span>: {
+    <span class="c-key">"1"</span>: {
+      <span class="c-key">"id"</span>: <span class="c-num">1</span>,
+      <span class="c-key">"load"</span>: <span class="c-num">34</span>,
+      <span class="c-key">"is_queen"</span>: <span class="c-num">false</span>,
+      <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>
+    },
+    <span class="c-key">"3"</span>: {
+      <span class="c-key">"load"</span>: <span class="c-num">18</span>,
+      <span class="c-key">"is_queen"</span>: <span class="c-num">true</span>
+    }
+  }
+}` },
+    queen: { label: 'GET /queen → 200 OK', body: `<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"queen"</span>: {
+    <span class="c-key">"id"</span>: <span class="c-num">3</span>,
+    <span class="c-key">"load"</span>: <span class="c-num">18</span>,
+    <span class="c-key">"status"</span>: <span class="c-str">"normal"</span>,
+    <span class="c-key">"elected_at"</span>: <span class="c-str">"2026-03-10T09:23:07"</span>
+  }
+}` },
+    send: { label: 'POST /send_packet → 200 OK', body: `<span class="c-comment">// Request body</span>
+{
+  <span class="c-key">"source"</span>: <span class="c-num">1</span>,
+  <span class="c-key">"destination"</span>: <span class="c-num">6</span>
+}
+
+<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"status"</span>: <span class="c-str">"delivered"</span>,
+  <span class="c-key">"path"</span>: [<span class="c-num">1</span>, <span class="c-num">2</span>, <span class="c-num">4</span>, <span class="c-num">6</span>],
+  <span class="c-key">"hops"</span>: <span class="c-num">3</span>
+}` },
+    fail: { label: 'POST /fail_node/3 → 200 OK', body: `<span class="c-comment">// No body required</span>
+<span class="c-comment">// POST /fail_node/3</span>
+
+<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"message"</span>: <span class="c-str">"Node 3 failed"</span>,
+  <span class="c-key">"new_queen"</span>: {
+    <span class="c-key">"id"</span>: <span class="c-num">1</span>,
+    <span class="c-key">"load"</span>: <span class="c-num">22</span>
+  }
+}` },
+    failqueen: { label: 'POST /fail_queen → 200 OK', body: `<span class="c-comment">// Triggers re-election</span>
+
+<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"old_queen"</span>: <span class="c-num">3</span>,
+  <span class="c-key">"new_queen"</span>: <span class="c-num">1</span>,
+  <span class="c-key">"reason"</span>: <span class="c-str">"queen_failed"</span>,
+  <span class="c-key">"timestamp"</span>: <span class="c-str">"2026-03-10T09:23:07"</span>
+}` },
+    logs: { label: 'GET /logs/packets → 200 OK', body: `<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"packets"</span>: [
+    {
+      <span class="c-key">"source"</span>: <span class="c-num">1</span>,
+      <span class="c-key">"destination"</span>: <span class="c-num">6</span>,
+      <span class="c-key">"path"</span>: <span class="c-str">"[1,2,4,6]"</span>,
+      <span class="c-key">"status"</span>: <span class="c-str">"delivered"</span>,
+      <span class="c-key">"timestamp"</span>: <span class="c-str">"2026-03-10T09:23:07"</span>
+    }
+  ]
+}` },
+    topology: { label: 'GET /topology → 200 OK', body: `<span class="c-comment">// Response</span>
+{
+  <span class="c-key">"nodes"</span>: [<span class="c-num">1</span>,<span class="c-num">2</span>,<span class="c-num">3</span>,<span class="c-num">4</span>,<span class="c-num">5</span>,<span class="c-num">6</span>],
+  <span class="c-key">"edges"</span>: [
+    [<span class="c-num">1</span>,<span class="c-num">2</span>],[<span class="c-num">1</span>,<span class="c-num">3</span>],
+    [<span class="c-num">2</span>,<span class="c-num">3</span>],[<span class="c-num">2</span>,<span class="c-num">4</span>],
+    [<span class="c-num">3</span>,<span class="c-num">5</span>],[<span class="c-num">4</span>,<span class="c-num">6</span>],
+    [<span class="c-num">5</span>,<span class="c-num">6</span>]
+  ]
+}` }
+  };
+
+  function showCode(key) {
+    document.querySelectorAll('.endpoint').forEach(e => e.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('code-lang').textContent = codeData[key].label;
+    document.getElementById('code-body').innerHTML = codeData[key].body;
+  }
+
+  function selectNode(id) {
+    addLog(`Inspected Node ${id} — Load: ${Math.floor(Math.random()*80+10)}%`, 'info');
+  }
+
+  // Auto simulate packets
+  setInterval(simulatePacket, 4000);
+</script>
+</body>
+</html>
